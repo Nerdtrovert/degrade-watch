@@ -85,3 +85,15 @@ pytest
 When the backend is running, API docs will be available at:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
+
+
+  Run the following commands from the root directory /Users/prajwalnavadagp/Engineering/Projects/degrade-watch:
+
+    # 1. Activate the virtual environment
+    source venv/bin/activate
+
+    # 2. Run the test suite to verify tests and backend package importing
+    pytest
+
+    # 3. Check the status of your running PostgreSQL container
+    docker compose ps
