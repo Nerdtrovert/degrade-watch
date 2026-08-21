@@ -517,12 +517,22 @@ Now generate the forensic incident report:"""
             "rupees": revenue_at_risk_paise / 100.0
         }
 
+        # Force backend-owned incident_id (LLM cannot change incident identity)
+        report["incident_id"] = evidence_package["incident_metadata"]["incident_id"]
+
         # Force backend-owned severity (LLM cannot downgrade/upgrade severity)
         report["severity"] = evidence_package["incident_metadata"]["severity"]
 
         # Force backend-owned status based on detector classification
         if evidence_package["incident_metadata"]["detector_classification"] == "NORMAL":
             report["status"] = "NO_ACTION"
+            # When no action is warranted, recovery should not be eligible
+            if "recovery" in report:
+                report["recovery"]["eligible"] = False
+                report["recovery"]["reason"] = "No action warranted based on evidence analysis"
+
+        # Force backend-owned affected segment (LLM cannot change the affected segment)
+        report["summary"]["where"] = evidence_package["affected_segment"].copy()
 
         # Add any other backend-computed fields here
         return report
