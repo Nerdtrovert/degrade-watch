@@ -1,0 +1,26 @@
+{
+  "scenario_id": "D",
+  "scenario_name": "device_degradation",
+  "merchant_id": "merch_upi_smb",
+  "true_cause": "D_DEVICE_DEGRADATION",
+  "affected_segment": {
+    "payment_method": null,
+    "bank": null,
+    "device": "ANDROID",
+    "upi_app": null
+  },
+  "window": {
+    "start": "2026-08-10T17:53:16.504000+00:00",
+    "end": "2026-08-10T19:23:16.504000+00:00"
+  },
+  "expected_classification": "INCIDENT",
+  "expected_severity": "MEDIUM",
+  "expected_behavior": {
+    "success_rate_target": [
+      0.8,
+      0.88
+    ],
+    "technical_error_increase": true,
+    "localized": true
+  }
+}

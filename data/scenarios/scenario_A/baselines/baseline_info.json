@@ -1,0 +1,10 @@
+{
+  "generated_at": "2026-08-21T14:31:32.576927+00:00",
+  "merchants_processed": [
+    "merch_large_ecom",
+    "merch_upi_smb",
+    "merch_subscription",
+    "merch_small"
+  ],
+  "total_merchants": 4
+}
