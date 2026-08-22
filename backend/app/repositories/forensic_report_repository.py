@@ -1,41 +1,52 @@
 """
 ForensicReport repository for DegradeWatch backend.
+Provides asynchronous database operations for ForensicReport model.
 """
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
 from ..models.forensic_report import ForensicReport
+from ..models.incident import Incident
 
 
 class ForensicReportRepository:
-    """Repository for ForensicReport model."""
+    """Repository for ForensicReport model with async database operations."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_by_incident_id(self, incident_id: str) -> Optional[ForensicReport]:
+    async def get_by_incident_id(self, incident_id: str) -> Optional[ForensicReport]:
         """Get forensic report by incident_id."""
-        return self.db.query(ForensicReport).join(ForensicReport.incident).filter(
-            Incident.incident_id == incident_id
-        ).first()
+        result = await self.db.execute(
+            select(ForensicReport)
+            .join(ForensicReport.incident)
+            .options(joinedload(ForensicReport.incident))
+            .filter(Incident.incident_id == incident_id)
+        )
+        return result.scalars().first()
 
-    def get_by_uuid(self, id: str) -> Optional[ForensicReport]:
+    async def get_by_uuid(self, id: str) -> Optional[ForensicReport]:
         """Get forensic report by UUID."""
-        return self.db.query(ForensicReport).filter(ForensicReport.id == id).first()
+        result = await self.db.execute(
+            select(ForensicReport).filter(ForensicReport.id == id)
+        )
+        return result.scalars().first()
 
-    def create(self, forensic_report: ForensicReport) -> ForensicReport:
+    async def create(self, forensic_report: ForensicReport) -> ForensicReport:
         """Create a new forensic report."""
         self.db.add(forensic_report)
-        self.db.commit()
-        self.db.refresh(forensic_report)
+        await self.db.commit()
+        await self.db.refresh(forensic_report)
         return forensic_report
 
-    def update(self, forensic_report: ForensicReport) -> ForensicReport:
+    async def update(self, forensic_report: ForensicReport) -> ForensicReport:
         """Update an existing forensic report."""
-        self.db.commit()
-        self.db.refresh(forensic_report)
+        await self.db.commit()
+        await self.db.refresh(forensic_report)
         return forensic_report
 
-    def delete(self, forensic_report: ForensicReport) -> None:
+    async def delete(self, forensic_report: ForensicReport) -> None:
         """Delete a forensic report."""
-        self.db.delete(forensic_report)
-        self.db.commit()
+        await self.db.delete(forensic_report)
+        await self.db.commit()

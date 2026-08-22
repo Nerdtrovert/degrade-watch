@@ -51,6 +51,7 @@ from backend.app.evidence_package import EvidencePackageBuilder
 from backend.app.llm_report_generator import LLMReportGenerator
 from backend.app.policy_engine import PolicyEngine
 from backend.app.recovery_engine import RecoveryEngine
+from app.database import SessionLocal
 
 
 class EndToEndRunner:
@@ -70,11 +71,18 @@ class EndToEndRunner:
         self.detector = AnomalyDetector()
         self.evidence_builder = EvidencePackageBuilder()
         self.policy_engine = PolicyEngine()
-        self.recovery_engine = RecoveryEngine()
+        # Create a database session for components that need it
+        self.db = SessionLocal()
+        self.recovery_engine = RecoveryEngine(db_session=self.db)
 
         import logging
         self.logger = logging.getLogger(__name__)
         self.logger.info("End-to-End Runner initialized")
+
+    def cleanup(self):
+        """Clean up resources, including database session."""
+        if hasattr(self, 'db'):
+            self.db.close()
 
     def run_hero_flow(
         self,

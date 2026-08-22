@@ -223,12 +223,61 @@ class TestRecoveryEngine:
     """Test suite for the RecoveryEngine class."""
 
     def test_init_without_razorpay_credentials(self):
-        """Test that the RecoveryEngine initializes without Razorpay credentials."""
+    """Test that the RecoveryEngine initializes without Razorpay credentials."""
+    with patch('app.recovery_engine.razorpay.Client') as mock_client:
+        mock_client.return_value = None
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
+        assert engine.razorpay_client is None
+        assert engine.config == {}
+        # Should not be in simulation mode by default
+        assert engine.simulation_mode is False
+
+    def test_init_with_simulation_mode_enabled(self):
+        """Test that the RecoveryEngine recognizes SIMULATION_MODE environment variable."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
-            assert engine.razorpay_client is None
-            assert engine.config == {}
+            # Create a mock database session
+            mock_session = Mock()
+
+            # Test with SIMULATION_MODE=true
+            with patch.dict(os.environ, {'SIMULATION_MODE': 'true'}):
+                engine = RecoveryEngine(db_session=mock_session)
+                assert engine.simulation_mode is True
+
+            # Test with SIMULATION_MODE=1
+            with patch.dict(os.environ, {'SIMULATION_MODE': '1'}):
+                engine = RecoveryEngine(db_session=mock_session)
+                assert engine.simulation_mode is True
+
+            # Test with SIMULATION_MODE=yes
+            with patch.dict(os.environ, {'SIMULATION_MODE': 'yes'}):
+                engine = RecoveryEngine(db_session=mock_session)
+                assert engine.simulation_mode is True
+
+            # Test with SIMULATION_MODE=false (should be False)
+            with patch.dict(os.environ, {'SIMULATION_MODE': 'false'}):
+                engine = RecoveryEngine(db_session=mock_session)
+                assert engine.simulation_mode is False
+
+    def test_init_with_config_and_simulation_mode(self):
+        """Test that the RecoveryEngine respects SIMULATION_MODE even with credentials."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = Mock()
+            config = {
+                'razorpay_key_id': 'test_key_id',
+                'razorpay_key_secret': 'test_key_secret'
+            }
+            # Create a mock database session
+            mock_session = Mock()
+            # Test with SIMULATION_MODE enabled
+            with patch.dict(os.environ, {'SIMULATION_MODE': 'true'}):
+                engine = RecoveryEngine(config, db_session=mock_session)
+                assert engine.config == config
+                # Even with credentials, if SIMULATION_MODE is set, client should be None
+                assert engine.razorpay_client is None
+                assert engine.simulation_mode is True
 
     def test_init_with_config(self):
         """Test that the RecoveryEngine initializes with config."""
@@ -238,34 +287,64 @@ class TestRecoveryEngine:
                 'razorpay_key_id': 'test_key_id',
                 'razorpay_key_secret': 'test_key_secret'
             }
-            engine = RecoveryEngine(config)
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(config, db_session=mock_session)
             assert engine.config == config
             # Since we are providing credentials (even if test), the Razorpay client should be initialized
             assert engine.razorpay_client is not None
+            # Should not be in simulation mode by default when credentials are provided
+            assert engine.simulation_mode is False
+
+    def test_init_with_config_and_simulation_mode(self):
+        """Test that the RecoveryEngine respects SIMULATION_MODE even with credentials."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = Mock()
+            config = {
+                'razorpay_key_id': 'test_key_id',
+                'razorpay_key_secret': 'test_key_secret'
+            }
+            # Create a mock database session
+            mock_session = Mock()
+            # Test with SIMULATION_MODE enabled
+            with patch.dict(os.environ, {'SIMULATION_MODE': 'true'}):
+                engine = RecoveryEngine(config, db_session=mock_session)
+                assert engine.config == config
+                # Even with credentials, if SIMULATION_MODE is set, client should be None
+                assert engine.razorpay_client is None
+                assert engine.simulation_mode is True
 
     def test_is_authorized_for_recovery_auto_approved(self):
         """Test that AUTO_APPROVED decisions are authorized."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         policy_decision = create_auto_approved_policy_decision()
         assert engine._is_authorized_for_recovery(policy_decision) is True
 
     def test_is_authorized_for_recovery_human_approved(self):
         """Test that HUMAN_APPROVAL decisions are authorized."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         policy_decision = create_auto_approved_policy_decision()
         policy_decision["decision"] = "HUMAN_APPROVAL"
         assert engine._is_authorized_for_recovery(policy_decision) is True
 
     def test_is_authorized_for_recovery_blocked(self):
         """Test that BLOCKED decisions are not authorized."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         policy_decision = create_auto_approved_policy_decision()
         policy_decision["decision"] = "BLOCKED"
         assert engine._is_authorized_for_recovery(policy_decision) is False
 
     def test_execute_recovery_unauthorized(self):
         """Test that execution fails when not authorized."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         evidence = create_base_evidence_package()
         llm_report = create_base_llm_report()
         policy_decision = create_auto_approved_policy_decision()
@@ -278,7 +357,9 @@ class TestRecoveryEngine:
 
     def test_execute_recovery_unsupported_action(self):
         """Test that execution fails for unsupported actions."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         evidence = create_base_evidence_package()
         llm_report = create_base_llm_report()
         policy_decision = create_auto_approved_policy_decision()
@@ -293,7 +374,9 @@ class TestRecoveryEngine:
         """Test recovery execution in simulation mode (no Razorpay credentials)."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
             evidence = create_base_evidence_package()
             llm_report = create_base_llm_report()
             policy_decision = create_auto_approved_policy_decision()
@@ -313,7 +396,9 @@ class TestRecoveryEngine:
         """Test that identical recovery requests return existing record."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
             evidence = create_base_evidence_package()
             llm_report = create_base_llm_report()
             policy_decision = create_auto_approved_policy_decision()
@@ -336,7 +421,9 @@ class TestRecoveryEngine:
         """Test payment status checking in simulation mode."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
             evidence = create_base_evidence_package()
             llm_report = create_base_llm_report()
             policy_decision = create_auto_approved_policy_decision()
@@ -357,7 +444,9 @@ class TestRecoveryEngine:
         """Test that audit events are created for state transitions."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
             evidence = create_base_evidence_package()
             llm_report = create_base_llm_report()
             policy_decision = create_auto_approved_policy_decision()
@@ -383,7 +472,9 @@ class TestRecoveryEngine:
         """Test that recovery records are stored and can be retrieved."""
         with patch('app.recovery_engine.razorpay.Client') as mock_client:
             mock_client.return_value = None
-            engine = RecoveryEngine()
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
             evidence = create_base_evidence_package()
             llm_report = create_base_llm_report()
             policy_decision = create_auto_approved_policy_decision()
@@ -400,7 +491,9 @@ class TestRecoveryEngine:
 
     def test_list_recoveries(self):
         """Test listing recovery records."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         evidence = create_base_evidence_package()
         llm_report = create_base_llm_report()
         policy_decision = create_auto_approved_policy_decision()
@@ -462,7 +555,9 @@ class TestRecoveryEngine:
 
     def test_cleanup_old_records(self):
         """Test cleaning up old recovery records."""
-        engine = RecoveryEngine()
+        # Create a mock database session
+        mock_session = Mock()
+        engine = RecoveryEngine(db_session=mock_session)
         evidence = create_base_evidence_package()
         llm_report = create_base_llm_report()
         policy_decision = create_auto_approved_policy_decision()
@@ -485,6 +580,98 @@ class TestRecoveryEngine:
         cleaned = engine.cleanup_old_records(older_than_hours=0)
         assert cleaned >= 2
         assert len(engine.list_recoveries()) == 0
+
+    def test_maximum_recovery_amount_revenue_at_risk_limit(self):
+        """Test that recovery fails when amount exceeds revenue_at_risk limit."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = None
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
+
+            # Create evidence package with low revenue_at_risk
+            evidence = create_base_evidence_package()
+            evidence["impact_evidence"]["revenue_at_risk"]["paise"] = 1000  # 10 INR
+
+            llm_report = create_base_llm_report()
+            # Request recovery amount higher than revenue_at_risk
+            llm_report["recovery"]["amount"]["paise"] = 5000  # 50 INR
+
+            policy_decision = create_auto_approved_policy_decision()
+
+            result = engine.execute_recovery(policy_decision, evidence, llm_report)
+
+            assert result["state"] == RecoveryState.FAILED.value
+            assert "exceeds maximum allowed" in result.get("error", "").lower()
+            assert "revenue_at_risk" in str(result.get("audit_events", []))
+
+    def test_maximum_recovery_amount_config_limit(self):
+        """Test that recovery fails when amount exceeds configured limit."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = None
+            # Create a mock database session
+            mock_session = Mock()
+            config = {'maximum_recovery_paise': 2000}  # 20 INR limit
+            engine = RecoveryEngine(config, db_session=mock_session)
+
+            evidence = create_base_evidence_package()
+            llm_report = create_base_llm_report()
+            # Request recovery amount higher than configured limit
+            llm_report["recovery"]["amount"]["paise"] = 5000  # 50 INR
+
+            policy_decision = create_auto_approved_policy_decision()
+
+            result = engine.execute_recovery(policy_decision, evidence, llm_report)
+
+            assert result["state"] == RecoveryState.FAILED.value
+            assert "exceeds maximum allowed" in result.get("error", "").lower()
+            assert "configured_limit" in str(result.get("audit_events", []))
+
+    def test_maximum_recovery_amount_env_limit(self):
+        """Test that recovery fails when amount exceeds environment variable limit."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = None
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
+
+            evidence = create_base_evidence_package()
+            llm_report = create_base_llm_report()
+            # Request recovery amount higher than env limit
+            llm_report["recovery"]["amount"]["paise"] = 5000  # 50 INR
+
+            policy_decision = create_auto_approved_policy_decision()
+
+            # Set environment variable limit
+            with patch.dict(os.environ, {'MAXIMUM_RECOVERY_PAISA': '3000'}):  # 30 INR limit
+                result = engine.execute_recovery(policy_decision, evidence, llm_report)
+
+                assert result["state"] == RecoveryState.FAILED.value
+                assert "exceeds maximum allowed" in result.get("error", "").lower()
+                assert "configured_limit" in str(result.get("audit_events", []))
+
+    def test_maximum_recovery_amount_within_limits(self):
+        """Test that recovery succeeds when amount is within limits."""
+        with patch('app.recovery_engine.razorpay.Client') as mock_client:
+            mock_client.return_value = None
+            # Create a mock database session
+            mock_session = Mock()
+            engine = RecoveryEngine(db_session=mock_session)
+
+            # Create evidence package with high revenue_at_risk
+            evidence = create_base_evidence_package()
+            evidence["impact_evidence"]["revenue_at_risk"]["paise"] = 50000  # 500 INR
+
+            llm_report = create_base_llm_report()
+            # Request recovery amount within limits
+            llm_report["recovery"]["amount"]["paise"] = 10000  # 100 INR
+
+            policy_decision = create_auto_approved_policy_decision()
+
+            result = engine.execute_recovery(policy_decision, evidence, llm_report)
+
+            assert result["state"] == RecoveryState.COMPLETED.value
+            assert result["amount_paise"] == 10000
 
 
 if __name__ == "__main__":

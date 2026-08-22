@@ -1,38 +1,57 @@
 """
 Incident service for DegradeWatch backend.
+Provides asynchronous database operations for Incident model.
 """
 from typing import Optional, List
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from ..repositories.incident_repository import IncidentRepository
 from ..models.incident import Incident
 
 
 class IncidentService:
-    """Service for Incident model."""
+    """Service for Incident model with async database operations."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.repository = IncidentRepository(db)
 
-    def get_by_id(self, incident_id: str) -> Optional[Incident]:
+    async def get_by_id(self, incident_id: str) -> Optional[Incident]:
         """Get incident by incident_id."""
-        return self.repository.get_by_id(incident_id)
+        return await self.repository.get_by_id(incident_id)
 
-    def get_by_merchant_id(self, merchant_id: str, skip: int = 0, limit: int = 100) -> List[Incident]:
+    async def get_by_merchant_id(self, merchant_id: str, skip: int = 0, limit: int = 100) -> List[Incident]:
         """Get incidents by merchant_id."""
-        return self.repository.get_by_merchant_id(merchant_id, skip, limit)
+        return await self.repository.get_by_merchant_id(merchant_id, skip, limit)
 
-    def get_all(self, skip: int = 0, limit: int = 100) -> List[Incident]:
+    async def get_all(self, skip: int = 0, limit: int = 100) -> List[Incident]:
         """Get all incidents."""
-        return self.repository.get_all(skip, limit)
+        return await self.repository.get_all(skip, limit)
 
-    def create(self, incident: Incident) -> Incident:
+    async def create(self, incident: Incident) -> Incident:
         """Create a new incident."""
-        return self.repository.create(incident)
+        return await self.repository.create(incident)
 
-    def update(self, incident: Incident) -> Incident:
+    async def update(self, incident: Incident) -> Incident:
         """Update an existing incident."""
-        return self.repository.update(incident)
+        return await self.repository.update(incident)
 
-    def delete(self, incident: Incident) -> None:
+    async def delete(self, incident: Incident) -> None:
         """Delete an incident."""
-        self.repository.delete(incident)
+        await self.repository.delete(incident)
+
+    async def get_count_by_merchant_id(self, merchant_id: str) -> int:
+        """Get count of incidents by merchant_id."""
+        return await self.repository.get_count_by_merchant_id(merchant_id)
+
+    async def get_count(self) -> int:
+        """Get total count of incidents."""
+        return await self.repository.get_count()
+
+    async def get_merchant_overview_stats(self, merchant_id: str):
+        """Get overview statistics for a merchant."""
+        return await self.repository.get_merchant_overview_stats(merchant_id)
+
+    async def get_recent_incidents(self, merchant_id: str, limit: int = 5):
+        """Get recent incidents for a merchant."""
+        return await self.repository.get_recent_incidents(merchant_id, limit)

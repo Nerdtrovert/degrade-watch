@@ -310,7 +310,9 @@ def test_scenario_a_hero_flow():
             "currency": "INR"
         }
 
-        recovery_engine = RecoveryEngine()  # Will now use mocked Razorpay client
+        # Create a mock database session for the recovery engine
+        mock_session = Mock()
+        recovery_engine = RecoveryEngine(db_session=mock_session)  # Will now use mocked Razorpay client
         recovery_result = recovery_engine.execute_recovery(
             policy_decision=policy_decision,
             evidence_package=evidence_package,

@@ -1,41 +1,52 @@
 """
 EvidencePackage repository for DegradeWatch backend.
+Provides asynchronous database operations for EvidencePackage model.
 """
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.orm import joinedload, selectinload
 from ..models.evidence_package import EvidencePackage
+from ..models.incident import Incident
 
 
 class EvidencePackageRepository:
-    """Repository for EvidencePackage model."""
+    """Repository for EvidencePackage model with async database operations."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.db = db
 
-    def get_by_incident_id(self, incident_id: str) -> Optional[EvidencePackage]:
+    async def get_by_incident_id(self, incident_id: str) -> Optional[EvidencePackage]:
         """Get evidence package by incident_id."""
-        return self.db.query(EvidencePackage).join(EvidencePackage.incident).filter(
-            Incident.incident_id == incident_id
-        ).first()
+        result = await self.db.execute(
+            select(EvidencePackage)
+            .join(EvidencePackage.incident)
+            .options(joinedload(EvidencePackage.incident))
+            .filter(Incident.incident_id == incident_id)
+        )
+        return result.scalars().first()
 
-    def get_by_uuid(self, id: str) -> Optional[EvidencePackage]:
+    async def get_by_uuid(self, id: str) -> Optional[EvidencePackage]:
         """Get evidence package by UUID."""
-        return self.db.query(EvidencePackage).filter(EvidencePackage.id == id).first()
+        result = await self.db.execute(
+            select(EvidencePackage).filter(EvidencePackage.id == id)
+        )
+        return result.scalars().first()
 
-    def create(self, evidence_package: EvidencePackage) -> EvidencePackage:
+    async def create(self, evidence_package: EvidencePackage) -> EvidencePackage:
         """Create a new evidence package."""
         self.db.add(evidence_package)
-        self.db.commit()
-        self.db.refresh(evidence_package)
+        await self.db.commit()
+        await self.db.refresh(evidence_package)
         return evidence_package
 
-    def update(self, evidence_package: EvidencePackage) -> EvidencePackage:
+    async def update(self, evidence_package: EvidencePackage) -> EvidencePackage:
         """Update an existing evidence package."""
-        self.db.commit()
-        self.db.refresh(evidence_package)
+        await self.db.commit()
+        await self.db.refresh(evidence_package)
         return evidence_package
 
-    def delete(self, evidence_package: EvidencePackage) -> None:
+    async def delete(self, evidence_package: EvidencePackage) -> None:
         """Delete an evidence package."""
-        self.db.delete(evidence_package)
-        self.db.commit()
+        await self.db.delete(evidence_package)
+        await self.db.commit()

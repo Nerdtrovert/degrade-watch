@@ -23,13 +23,19 @@ sys.path.append(str(project_root))
 sys.path.append(str(project_root / "backend"))
 
 from backend.app.recovery_engine import RecoveryEngine
+from app.database import SessionLocal
 
 def test_recovery_engine_mode():
     """Test that Recovery Engine detects Razorpay credentials and initializes client."""
     print("Testing Recovery Engine initialization...")
 
-    # Create recovery engine instance
-    recovery_engine = RecoveryEngine()
+    # Create a database session for the recovery engine
+    db = SessionLocal()
+    try:
+        # Create recovery engine instance
+        recovery_engine = RecoveryEngine(db_session=db)
+    finally:
+        db.close()
 
     # Check if Razorpay client was initialized
     if recovery_engine.razorpay_client is not None:

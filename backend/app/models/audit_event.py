@@ -2,7 +2,8 @@
 AuditEvent model for DegradeWatch backend.
 """
 import uuid
-from sqlalchemy import DateTime, String, Text
+from typing import Optional
+from sqlalchemy import DateTime, String, Text, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,12 +23,15 @@ class AuditEvent(Base):
     )
     incident_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("incidents.id"),
         nullable=False,
         index=True
     )
     recovery_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),
-        nullable=True
+        ForeignKey("recoveries.id"),
+        nullable=True,
+        index=True
     )
     event_type: Mapped[str] = mapped_column(
         String(100),
@@ -35,7 +39,8 @@ class AuditEvent(Base):
     )  # e.g., INCIDENT_CREATED, EVIDENCE_GENERATED, POLICY_EVALUATED, RECOVERY_REQUESTED, etc.
     timestamp: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True),
-        nullable=False
+        nullable=False,
+        index=True
     )
     actor: Mapped[Optional[str]] = mapped_column(
         String(100),

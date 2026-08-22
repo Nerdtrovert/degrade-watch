@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "target": "ES2020",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "isolatedModules": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["vite.config.ts", "**/*.ts", "**/*.tsx"]
+}

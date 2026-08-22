@@ -40,9 +40,15 @@ except ImportError as e:
 
 # Now test Recovery Engine
 from backend.app.recovery_engine import RecoveryEngine
+from app.database import SessionLocal
 
 print("\nCreating Recovery Engine...")
-recovery_engine = RecoveryEngine()
+# Create a database session for the recovery engine
+db = SessionLocal()
+try:
+    recovery_engine = RecoveryEngine(db_session=db)
+finally:
+    db.close()
 
 print(f"Razorpay client after init: {recovery_engine.razorpay_client}")
 if recovery_engine.razorpay_client is not None:

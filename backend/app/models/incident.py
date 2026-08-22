@@ -2,7 +2,7 @@
 Incident model for DegradeWatch backend.
 """
 import uuid
-from sqlalchemy import String, Text, DateTime
+from sqlalchemy import String, Text, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -28,6 +28,7 @@ class Incident(Base):
     )
     merchant_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("merchants.id"),
         nullable=False,
         index=True
     )
@@ -49,7 +50,8 @@ class Incident(Base):
     )
     detection_timestamp: Mapped[DateTime] = mapped_column(
         DateTime(timezone=True),
-        nullable=False
+        nullable=False,
+        index=True
     )
 
     # Relationships

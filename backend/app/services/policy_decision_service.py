@@ -1,34 +1,35 @@
 """
 PolicyDecision service for DegradeWatch backend.
+Provides asynchronous database operations for PolicyDecision model.
 """
 from typing import Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from ..repositories.policy_decision_repository import PolicyDecisionRepository
 from ..models.policy_decision import PolicyDecision
 
 
 class PolicyDecisionService:
-    """Service for PolicyDecision model."""
+    """Service for PolicyDecision model with async database operations."""
 
-    def __init__(self, db: Session):
+    def __init__(self, db: AsyncSession):
         self.repository = PolicyDecisionRepository(db)
 
-    def get_by_incident_id(self, incident_id: str) -> Optional[PolicyDecision]:
+    async def get_by_incident_id(self, incident_id: str) -> Optional[PolicyDecision]:
         """Get policy decision by incident_id."""
-        return self.repository.get_by_incident_id(incident_id)
+        return await self.repository.get_by_incident_id(incident_id)
 
-    def get_by_uuid(self, id: str) -> Optional[PolicyDecision]:
+    async def get_by_uuid(self, id: str) -> Optional[PolicyDecision]:
         """Get policy decision by UUID."""
-        return self.repository.get_by_uuid(id)
+        return await self.repository.get_by_uuid(id)
 
-    def create(self, policy_decision: PolicyDecision) -> PolicyDecision:
+    async def create(self, policy_decision: PolicyDecision) -> PolicyDecision:
         """Create a new policy decision."""
-        return self.repository.create(policy_decision)
+        return await self.repository.create(policy_decision)
 
-    def update(self, policy_decision: PolicyDecision) -> PolicyDecision:
+    async def update(self, policy_decision: PolicyDecision) -> PolicyDecision:
         """Update an existing policy decision."""
-        return self.repository.update(policy_decision)
+        return await self.repository.update(policy_decision)
 
-    def delete(self, policy_decision: PolicyDecision) -> None:
+    async def delete(self, policy_decision: PolicyDecision) -> None:
         """Delete a policy decision."""
-        self.repository.delete(policy_decision)
+        await self.repository.delete(policy_decision)

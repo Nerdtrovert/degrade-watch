@@ -2,7 +2,8 @@
 Recovery model for DegradeWatch backend.
 """
 import uuid
-from sqlalchemy import DateTime, String, Text, Integer
+from typing import Optional
+from sqlalchemy import DateTime, String, Text, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,6 +23,7 @@ class Recovery(Base):
     )
     incident_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("incidents.id"),
         nullable=False,
         index=True
     )
@@ -67,6 +69,10 @@ class Recovery(Base):
     incident: Mapped["Incident"] = relationship(
         "Incident",
         back_populates="recoveries"
+    )
+    audit_events: Mapped[list["AuditEvent"]] = relationship(
+        "AuditEvent",
+        back_populates="recovery"
     )
 
     def __repr__(self) -> str:

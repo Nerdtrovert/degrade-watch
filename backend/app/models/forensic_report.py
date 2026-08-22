@@ -2,7 +2,8 @@
 ForensicReport model for DegradeWatch backend.
 """
 import uuid
-from sqlalchemy import DateTime, String
+from typing import Optional
+from sqlalchemy import DateTime, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -22,6 +23,7 @@ class ForensicReport(Base):
     )
     incident_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("incidents.id"),
         nullable=False,
         index=True
     )

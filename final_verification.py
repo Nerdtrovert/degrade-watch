@@ -30,6 +30,9 @@ project_root = Path(__file__).parent
 sys.path.append(str(project_root))
 sys.path.append(str(project_root / "backend"))
 
+# Import database session
+from app.database import SessionLocal
+
 def verify_environment():
     """Verify environment loading."""
     print("=== ENVIRONMENT VERIFICATION ===")
@@ -50,7 +53,12 @@ def verify_recovery_engine_mode():
     # Import after environment is loaded
     from backend.app.recovery_engine import RecoveryEngine
 
-    recovery_engine = RecoveryEngine()
+    # Create a database session for the recovery engine
+    db = SessionLocal()
+    try:
+        recovery_engine = RecoveryEngine(db_session=db)
+    finally:
+        db.close()
 
     if recovery_engine.razorpay_client is not None:
         print("RAZORPAY MODE: TEST MODE (Razorpay client initialized)")
@@ -77,7 +85,12 @@ def run_scenario(window_start, window_end, merchant_id, scenario_name):
         detector = AnomalyDetector()
         evidence_builder = EvidencePackageBuilder()
         policy_engine = PolicyEngine()
-        recovery_engine = RecoveryEngine()
+        # Create a database session for the recovery engine
+        db = SessionLocal()
+        try:
+            recovery_engine = RecoveryEngine(db_session=db)
+        finally:
+            db.close()
 
         # Stage 1: Detection
         print("Stage 1: Running anomaly detector...")
