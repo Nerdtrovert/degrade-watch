@@ -101,3 +101,8 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+
+# Interview/Temporary notes
+Failed.md
+result_scenario_A.json
+result_scenario_E.json

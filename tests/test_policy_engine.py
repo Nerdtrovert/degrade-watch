@@ -9,7 +9,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from backend.app.policy_engine import PolicyEngine, PolicyConfig
+from app.policy_engine import PolicyEngine, PolicyConfig
 
 
 # Helper functions to create sample evidence packages and LLM reports
@@ -267,7 +267,7 @@ class TestPolicyEngine:
         evidence["error_evidence"]["changes"]["customer_error_rate_change"] = 0.2
         evidence["error_evidence"]["changes"]["technical_error_rate_change"] = 0.1
         # Also update the investigation checklist to reflect this
-        evidence["investigation_checklist"][0]["result"] = "PASS"
+        evidence["investigation_checklist"][0]["result"] = "FAIL"
         evidence["investigation_checklist"][0]["details"] = "Customer error rate change is greater than technical error rate change"
         llm_report = create_base_llm_report()
 

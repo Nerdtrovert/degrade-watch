@@ -643,7 +643,7 @@ class TestLLMReportGenerator(unittest.TestCase):
         generator._validate_report_consistency(report, self.sample_evidence_package)
 
     def test_validate_report_consistency_mismatched_incident_id(self):
-        """Test that report with mismatched incident ID raises ValueError."""
+        """Test that report with mismatched incident ID logs warning (backend will override)."""
         generator = LLMReportGenerator()
 
         report = {
@@ -679,14 +679,15 @@ class TestLLMReportGenerator(unittest.TestCase):
             "timeline": []
         }
 
-        with self.assertRaises(ValueError) as context:
+        # Should not raise ValueError - backend will override incident_id
+        # Should log a warning about the hallucination
+        with self.assertLogs('backend.app.llm_report_generator', level='WARNING') as log:
             generator._validate_report_consistency(report, self.sample_evidence_package)
-
-        self.assertIn("Report incident_id", str(context.exception))
-        self.assertIn("doesn't match evidence", str(context.exception))
+            # Check that warning was logged
+            self.assertTrue(any("LLM hallucinated incident_id" in msg for msg in log.output))
 
     def test_validate_report_consistency_mismatched_segment(self):
-        """Test that report with mismatched affected segment raises ValueError."""
+        """Test that report with mismatched affected segment logs warning (backend will override)."""
         generator = LLMReportGenerator()
 
         report = {
@@ -722,11 +723,12 @@ class TestLLMReportGenerator(unittest.TestCase):
             "timeline": []
         }
 
-        with self.assertRaises(ValueError) as context:
+        # Should not raise ValueError - backend will override affected segment
+        # Should log a warning about the hallucination
+        with self.assertLogs('backend.app.llm_report_generator', level='WARNING') as log:
             generator._validate_report_consistency(report, self.sample_evidence_package)
-
-        self.assertIn("Report 'payment_method'", str(context.exception))
-        self.assertIn("doesn't match evidence", str(context.exception))
+            # Check that warning was logged
+            self.assertTrue(any("LLM hallucinated segment field 'payment_method'" in msg for msg in log.output))
 
     @patch('backend.app.llm_report_generator.openai')
     def test_generate_report_success(self, mock_openai):

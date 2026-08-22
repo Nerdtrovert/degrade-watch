@@ -160,7 +160,7 @@ class PolicyEngine:
         # primarily_customer_caused.
 
         # We'll initialize a flag.
-        is_primarily_customer_caused = False
+        is_primarily_customer_caused = None
 
         # Check the investigation checklist first.
         investigation_checklist = evidence_package.get("investigation_checklist", [])
@@ -175,11 +175,13 @@ class PolicyEngine:
                 break
 
         # If we didn't find it in the checklist, we'll use the changes.
-        if not is_primarily_customer_caused:
+        if is_primarily_customer_caused is None:
             # We'll consider it primarily customer-caused if the customer change is
             # greater than the technical change (and note: we are looking for increases).
             if customer_change > technical_change:
                 is_primarily_customer_caused = True
+            else:
+                is_primarily_customer_caused = False
 
         if is_primarily_customer_caused:
             reason_codes.append("PRIMARILY_CUSTOMER_CAUSED")

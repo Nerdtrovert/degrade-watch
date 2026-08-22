@@ -1192,11 +1192,37 @@ class EvidencePackageBuilder:
         current_success_rate = current_segment_stats.get("success_rate", 0.0)
         current_avg_amount = current_segment_stats.get("average_amount", 0.0) if current_segment_stats else 0.0
 
+        # Determine actual baseline duration from metadata
+        baseline_period = baseline.get("period", {"days": 14})
+        baseline_days = baseline_period.get("days", 14)
+        baseline_duration_minutes = baseline_days * 24 * 60
+
+        # Determine current window duration in minutes
+        window = detector_result.get("window", {})
+        current_window_duration = window.get("duration_minutes")
+        if not current_window_duration:
+            from datetime import datetime
+            start_str = window.get("start")
+            end_str = window.get("end")
+            if start_str and end_str:
+                try:
+                    start_dt = datetime.fromisoformat(start_str.replace("Z", "+00:00"))
+                    end_dt = datetime.fromisoformat(end_str.replace("Z", "+00:00"))
+                    current_window_duration = (end_dt - start_dt).total_seconds() / 60
+                except Exception:
+                    current_window_duration = 90.0
+            else:
+                current_window_duration = 90.0
+
+        # Normalize baseline attempts to the current window duration
+        normalization_factor = current_window_duration / baseline_duration_minutes if baseline_duration_minutes > 0 else 0
+        expected_baseline_attempts = baseline_attempts * normalization_factor
+
         # Use baseline average amount for consistency (as per requirements)
         avg_amount_rupees = baseline_avg_amount  # Keep in rupees
 
-        # Calculate impact metrics
-        expected_successful_payments = baseline_success_rate * baseline_attempts
+        # Calculate impact metrics using normalized attempts
+        expected_successful_payments = baseline_success_rate * expected_baseline_attempts
         actual_successful_payments = current_success_rate * current_attempts
 
         # Revenue calculations (in paise as per requirements)
@@ -1773,7 +1799,12 @@ class EvidencePackageBuilder:
 
         # 5. Are other banks healthy?
         loc_evidence = self._build_localization_evidence(detector_result, baseline, payments)
-        other_banks_status = loc_evidence.get("control_analysis", {}).get("status", "UNKNOWN")
+        control_segments = loc_evidence.get("control_analysis", {}).get("control_segments", {})
+        other_banks_status = "HEALTHY"
+        for name, data in control_segments.items():
+            if "Other banks" in name and data["status"] == "DEGRADED":
+                other_banks_status = "DEGRADED"
+                break
         checklist.append(self._build_checklist_item(
             check="other_banks_healthy",
             result="PASS" if other_banks_status == "HEALTHY" else "FAIL",
@@ -1826,7 +1857,7 @@ class EvidencePackageBuilder:
         lat_status = lat_signal.get("status", "NORMAL")
         checklist.append(self._build_checklist_item(
             check="latency_change",
-            result="PASS" if lat_status in ["WARNING", "CRITICAL", "CONCERNING"] else "FAIL",
+            result="PASS" if lat_status in ["WARNING", "CRITICAL", "CONCERNING", "ELEVATED"] else "FAIL",
             finding=f"Latency status: {lat_status}",
             evidence_refs=["latency_evidence.changes.relative_change"]
         ))
@@ -1890,7 +1921,7 @@ class EvidencePackageBuilder:
                                                     detector_result["technical_error_signal"]["status"] in ["NORMAL", "ELEVATED"])
         checklist.append(self._build_checklist_item(
             check="primarily_customer_caused",
-            result="PASS" if is_customer_caused else "FAIL",  # PASS means it IS customer-caused
+            result="FAIL" if is_customer_caused else "PASS",  # FAIL means it IS customer-caused (safety check failed)
             finding=f"Event is {'primarily customer-caused' if is_customer_caused else 'not primarily customer-caused'} "
                    f"(customer change: {cust_change*100:.1f}pp, technical change: {tech_change*100:.1f}pp)",
             evidence_refs=["error_evidence.changes.customer_error_rate_change",

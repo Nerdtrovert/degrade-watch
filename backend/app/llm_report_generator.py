@@ -428,10 +428,14 @@ Now generate the forensic incident report:"""
         Validate that the LLM report is consistent with the evidence package.
 
         This prevents the LLM from inventing facts or contradicting the evidence.
+        Note: incident_id, severity, and affected segment are validated here but will be
+        overwritten by backend-owned values in _add_backend_computed_fields. This validation
+        serves as a hallucination check to detect when the LLM invents information that
+        contradicts the evidence.
         """
-        # Validate incident ID matches
+        # Validate incident ID matches (will be overwritten by backend, but check for hallucination)
         if report["incident_id"] != evidence_package["incident_metadata"]["incident_id"]:
-            raise ValueError(f"Report incident_id '{report['incident_id']}' doesn't match evidence '{evidence_package['incident_metadata']['incident_id']}'")
+            logger.warning(f"LLM hallucinated incident_id: '{report['incident_id']}' vs evidence '{evidence_package['incident_metadata']['incident_id']}' - backend will override")
 
         # Validate severity matches detector classification (LLM can interpret but shouldn't contradict)
         detector_severity = evidence_package["incident_metadata"]["severity"]
@@ -442,9 +446,9 @@ Now generate the forensic incident report:"""
             expected = severity_map[detector_severity]
             # For now, we'll accept any severity as LLM can interpret, but log if very different
             if (expected == "LOW" and report_severity == "HIGH") or (expected == "HIGH" and report_severity == "LOW"):
-                logger.warning(f"Severity mismatch: detector says {detector_severity}, LLM says {report_severity}")
+                logger.warning(f"Severity mismatch: detector says {detector_severity}, LLM says {report_severity} - backend will override")
 
-        # Validate affected segment matches evidence
+        # Validate affected segment matches evidence (will be overwritten by backend, but check for hallucination)
         evidence_segment = evidence_package["affected_segment"]
         report_where = report["summary"]["where"]
 
@@ -461,7 +465,7 @@ Now generate the forensic incident report:"""
                 report_val = None
 
             if evidence_val != report_val:
-                raise ValueError(f"Report '{field}' '{report_val}' doesn't match evidence '{evidence_val}'")
+                logger.warning(f"LLM hallucinated segment field '{field}': '{report_val}' vs evidence '{evidence_val}' - backend will override")
 
         # Validate that alternative hypotheses assessments are consistent with evidence
         # This is a simplified check - in practice we'd do deeper validation
