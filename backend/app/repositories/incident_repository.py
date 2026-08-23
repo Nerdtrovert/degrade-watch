@@ -8,6 +8,7 @@ from sqlalchemy import select, func, case
 from sqlalchemy.orm import selectinload
 from ..models.incident import Incident
 from ..models.merchant import Merchant
+from ..models.evidence_package import EvidencePackage
 
 
 class IncidentRepository:
@@ -112,8 +113,8 @@ class IncidentRepository:
                 func.coalesce(func.sum(
                     case(
                         (
-                            Incident.evidence_package.has_value(),
-                            Incident.evidence_package['impact_evidence']['revenue_at_risk']['paise'].astext.cast(Numeric)
+                            EvidencePackage.evidence_package.isnot(None),
+                            EvidencePackage.evidence_package['impact_evidence']['revenue_at_risk']['paise'].astext.cast(Numeric)
                         ),
                         else_=0
                     )
@@ -121,22 +122,23 @@ class IncidentRepository:
                 func.avg(
                     case(
                         (
-                            Incident.evidence_package.has_value(),
-                            Incident.evidence_package['success_rate_evidence']['baseline_success_rate'].astext.cast(Numeric)
+                            EvidencePackage.evidence_package.isnot(None),
+                            EvidencePackage.evidence_package['success_rate_evidence']['baseline_success_rate'].astext.cast(Numeric)
                         )
                     )
                 ).label('avg_baseline_success_rate'),
                 func.avg(
                     case(
                         (
-                            Incident.evidence_package.has_value(),
-                            Incident.evidence_package['success_rate_evidence']['current_success_rate'].astext.cast(Numeric)
+                            EvidencePackage.evidence_package.isnot(None),
+                            EvidencePackage.evidence_package['success_rate_evidence']['current_success_rate'].astext.cast(Numeric)
                         )
                     )
                 ).label('avg_current_success_rate')
             )
             .select_from(Incident)
             .join(Incident.merchant)
+            .outerjoin(EvidencePackage, Incident.evidence_package)
             .filter(Merchant.merchant_id == merchant_id)
         )
 
@@ -162,10 +164,8 @@ class IncidentRepository:
         result = await self.db.execute(
             select(Incident)
             .options(
-                selectinload(Incident.evidence_package).load_only(
-                    Incident.evidence_package['impact_evidence'],
-                    Incident.evidence_package['success_rate_evidence']
-                )
+                selectinload(Incident.evidence_package),
+                selectinload(Incident.merchant)
             )
             .join(Incident.merchant)
             .filter(Merchant.merchant_id == merchant_id)

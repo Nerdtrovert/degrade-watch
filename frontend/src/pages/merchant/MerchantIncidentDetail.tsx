@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { merchantAPI, MerchantIncident } from '../api/merchant';
+import { merchantAPI, MerchantIncident } from '../../api/merchant';
 
 const MerchantIncidentDetail: React.FC = () => {
   const { incidentId } = useParams<{ incidentId: string }>();

@@ -14,8 +14,8 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
-from .models import User
-from .database import SessionLocal
+from .models import User, Merchant
+from .database import SyncSessionLocal, get_sync_db
 
 # Password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -64,7 +64,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 
 def get_db() -> Session:
     """Database session dependency."""
-    db = SessionLocal()
+    db = SyncSessionLocal()
     try:
         yield db
     finally:
@@ -101,19 +101,18 @@ def get_current_active_user(
 
 
 def get_current_merchant_id(
-    current_user: User = Depends(get_current_active_user)
+    current_user: User = Depends(get_current_active_user),
+    db: Session = Depends(get_db)
 ) -> str:
     """Get the merchant ID for the current user."""
     if current_user.merchant_id is None:
         raise ValidationException("User is not associated with any merchant")
-    # We need to get the merchant's merchant_id string
-    # For now, we'll return the UUID as string, but ideally we'd join with Merchant table
-    # Let's modify this to properly get the merchant_id string
 
-    # Actually, let's return the user's merchant UUID for now
-    # In a real implementation, we'd want to join with the Merchant table
-    # to get the merchant_id string
-    return str(current_user.merchant_id)
+    # Query the merchant to get its merchant_id string
+    merchant = db.query(Merchant).filter(Merchant.id == current_user.merchant_id).first()
+    if merchant is None:
+        raise ValidationException("Merchant not found")
+    return merchant.merchant_id
 
 
 def require_role(required_role: str):

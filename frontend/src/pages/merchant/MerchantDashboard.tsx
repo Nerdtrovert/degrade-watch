@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { merchantAPI, MerchantOverview, MerchantIncident } from '../api/merchant';
+import { merchantAPI, MerchantOverview, MerchantIncident } from '../../api/merchant';
 
 const MerchantDashboard: React.FC = () => {
   const [overview, setOverview] = useState<MerchantOverview | null>(null);

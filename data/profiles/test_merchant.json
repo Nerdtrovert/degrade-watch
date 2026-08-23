@@ -1,0 +1,32 @@
+{
+  "merchant_id": "test_merchant",
+  "name": "Test Merchant",
+  "method_distribution": {
+    "UPI": 1.0,
+    "CARD": 0.0,
+    "NETBANKING": 0.0
+  },
+  "baseline_success_rates": {
+    "UPI": 0.92,
+    "CARD": 0.0,
+    "NETBANKING": 0.0
+  },
+  "device_distribution": {
+    "ANDROID": 1.0,
+    "IOS": 0.0,
+    "WEB": 0.0
+  },
+  "upi_app_distribution": {
+    "PHONEPE": 1.0,
+    "GPAY": 0.0,
+    "PAYTM": 0.0,
+    "OTHER": 0.0
+  },
+  "upi_bank_distribution": {
+    "BANK_X": 1.0
+  },
+  "daily_volume": {
+    "min": 100,
+    "max": 1000
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "merchant_id": "merch_subscription",
+  "name": "Subscription / Recurring Business",
+  "method_distribution": {
+    "UPI": 0.35,
+    "CARD": 0.60,
+    "NETBANKING": 0.05
+  },
+  "baseline_success_rates": {
+    "overall": 0.910,
+    "UPI": 0.920,
+    "CARD": 0.915,
+    "NETBANKING": 0.860
+  },
+  "normal_variance": {
+    "overall": 0.015,
+    "UPI": 0.015,
+    "CARD": 0.015,
+    "NETBANKING": 0.015
+  },
+  "device_distribution": {
+    "ANDROID": 0.50,
+    "IOS": 0.35,
+    "WEB": 0.15
+  },
+  "upi_app_distribution": {
+    "PHONEPE": 0.35,
+    "GPAY": 0.33,
+    "PAYTM": 0.20,
+    "OTHER": 0.12
+  },
+  "upi_bank_distribution": {
+    "BANK_X": 0.20,
+    "HDFC": 0.18,
+    "SBI": 0.16,
+    "ICICI": 0.10,
+    "OTHER": 0.36
+  },
+  "daily_volume": {
+    "min": 3500,
+    "max": 5000
+  },
+  "peak_hours": [],
+  "traffic_profile": "subscription_flat",
+  "normal_error_profile": {
+    "customer_caused": 0.85,
+    "technical": 0.07,
+    "other": 0.08
+  }
+}

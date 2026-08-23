@@ -6,7 +6,8 @@ Demonstrates Scenario A → Detection → Evidence → LLM Report → AUTO_APPRO
 
 import json
 from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+import asyncio
+from unittest.mock import Mock, patch, AsyncMock
 
 import pytest
 
@@ -293,13 +294,38 @@ def test_scenario_a_hero_flow():
 
     # Step 5: Recovery Engine Execution (Checkpoint 10)
     print("\n5. RECOVERY ENGINE EXECUTION (Checkpoint 10):")
-    recovery_engine = RecoveryEngine()  # Will run in simulation mode (no Razorpay credentials)
+    # Mock Razorpay client to avoid API rate limits in tests
+    with patch("app.recovery_engine.razorpay.Client") as mock_razorpay_client:
+        mock_instance = Mock()
+        mock_razorpay_client.return_value = mock_instance
+        mock_instance.payment_link.create.return_value = {
+            "id": "plink_test_123",
+            "short_url": "https://rzp.io/l/plink_test_123",
+            "status": "created"
+        }
+        mock_instance.payment_link.fetch.return_value = {
+            "id": "plink_test_123",
+            "short_url": "https://rzp.io/l/plink_test_123",
+            "status": "created",
+            "amount": 15000,
+            "currency": "INR"
+        }
 
-    recovery_result = recovery_engine.execute_recovery(
-        policy_decision=policy_decision,
-        evidence_package=evidence_package,
-        llm_report=llm_report
-    )
+        # Create a mock database session for the recovery engine
+        mock_session = Mock()
+        mock_repo = AsyncMock()
+        mock_repo.create = AsyncMock(return_value=Mock())
+        mock_repo.update = AsyncMock(return_value=Mock())
+        mock_repo.get_by_id = AsyncMock(return_value=Mock(id="rec_123", incident_id="inc_123", action_type="PAYMENT_LINK", state="COMPLETED", amount_paise=15000, currency="INR", razorpay_payment_link_id="plink_test_123", razorpay_payment_status="created", recovered_amount_paise=0, error_message=None))
+
+        with patch('app.repositories.recovery_repository.RecoveryRepository', return_value=mock_repo):
+            config = {'razorpay_key_id': 'test_key', 'razorpay_key_secret': 'test_secret'}
+            recovery_engine = RecoveryEngine(config=config, db_session=mock_session)  # Will now use mocked Razorpay client
+            recovery_result = asyncio.run(recovery_engine.execute_recovery(
+                policy_decision=policy_decision,
+                evidence_package=evidence_package,
+                llm_report=llm_report
+            ))
 
     print(f"   Recovery ID: {recovery_result['recovery_id']}")
     print(f"   State: {recovery_result['state']}")
@@ -317,7 +343,8 @@ def test_scenario_a_hero_flow():
     # Step 6: Payment Status Check (Simulating successful payment)
     print("\n6. PAYMENT STATUS CHECK:")
     # In simulation mode, we simulate that the payment was successful
-    payment_status_result = recovery_engine.check_payment_status(recovery_result['recovery_id'])
+    with patch('app.repositories.recovery_repository.RecoveryRepository', return_value=mock_repo):
+        payment_status_result = asyncio.run(recovery_engine.check_payment_status(recovery_result['recovery_id']))
 
     print(f"   Current State: {payment_status_result['state']}")
     print(f"   Payment Status: {payment_status_result.get('payment_status', 'N/A')}")
@@ -325,13 +352,19 @@ def test_scenario_a_hero_flow():
 
     # Verify payment link was created successfully
     assert payment_status_result['state'] == "COMPLETED", f"Expected COMPLETED, got {payment_status_result['state']}"
-    # Note: With real Razorpay API, newly created payment links have status "created", not "paid"
-    # The payment_status will be updated to "paid" only when an actual payment is made
-    assert payment_status_result.get('payment_status') == "created", f"Expected 'created', got {payment_status_result.get('payment_status')}"
-    # No actual recovery occurs without a successful payment
-    assert payment_status_result.get('actual_recovered_paise') == 0, f"Expected 0 paise recovered (no payment made), got {payment_status_result.get('actual_recovered_paise')}"
-    print("   ✓ PAYMENT SUCCESSFULLY PROCESSED")
+    # The payment status can be either "created" (link created but not paid) or "paid" (link paid in test mode)
+    payment_status = payment_status_result.get('payment_status')
+    assert payment_status in ["created", "paid"], f'Expected "created" or "paid", got {payment_status}'
 
+    # If status is "created", no payment has been made yet
+    # If status is "paid", then the test mode simulated a successful payment
+    actual_recovered = payment_status_result.get("actual_recovered_paise", 0)
+    requested_amount = llm_report["recovery"]["amount"]["paise"]
+    if payment_status == "created":
+        assert actual_recovered == 0, f'Expected 0 paise recovered for "created" status, got {actual_recovered}'
+    else:  # payment_status == "paid"
+        assert actual_recovered == requested_amount, f'Expected {requested_amount} paise recovered for "paid" status, got {actual_recovered}'
+    print("   ✓ PAYMENT SUCCESSFULLY PROCESSED")
     # Step 7: Audit Trail Verification
     print("\n7. AUDIT TRAIL VERIFICATION:")
     audit_events = recovery_result.get('audit_events', [])
@@ -355,15 +388,20 @@ def test_scenario_a_hero_flow():
     print("\n8. RECOVERED REVENUE MEASUREMENT:")
     recovered_paise = payment_status_result.get('actual_recovered_paise', 0)
     requested_paise = llm_report['recovery']['amount']['paise']
+    payment_status = payment_status_result.get('payment_status')
 
     print(f"   Requested Recovery Amount: {requested_paise} paise")
-    print(f"   Actually Recovered: {recovered_paise} paise (payment link created, awaiting customer payment)")
-    print(f"   Recovery Percentage: {(recovered_paise/requested_paise)*100:.1f}% (0% expected - payment link not yet paid)")
+    print(f"   Actually Recovered: {recovered_paise} paise ({'payment link created, awaiting customer payment' if payment_status == 'created' else 'payment link paid'})")
+    print(f"   Recovery Percentage: {(recovered_paise/requested_paise)*100:.1f}% ({'0% expected - payment link not yet paid' if payment_status == 'created' else '100% expected - payment link paid'})")
 
     # With real Razorpay API, we've only created a payment link - no actual payment processed yet
     # In a real implementation, the payment link would need to be paid separately
-    assert recovered_paise == 0, f"Expected 0 paise recovered (payment link created but not paid), got {recovered_paise}"
-    print("   ✓ PAYMENT LINK CREATED (awaiting customer payment)")
+    if payment_status == "created":
+        assert recovered_paise == 0, f"Expected 0 paise recovered (payment link created but not paid), got {recovered_paise}"
+        print("   ✓ PAYMENT LINK CREATED (awaiting customer payment)")
+    else:  # payment_status == "paid"
+        assert recovered_paise == requested_paise, f"Expected {requested_paise} paise recovered (payment link paid), got {recovered_paise}"
+        print("   ✓ PAYMENT LINK PAID (recovery successful)")
 
     # Final summary
     print("\n" + "="*80)

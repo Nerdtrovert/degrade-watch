@@ -1,0 +1,848 @@
+{
+  "execution_id": "exec_20260822_100445",
+  "timestamp": "2026-08-22T10:04:45.584917+00:00",
+  "merchant_id": "merch_upi_smb",
+  "window": {
+    "start": "2026-08-10T17:53:16.504000+00:00",
+    "end": "2026-08-10T19:23:16.504000+00:00"
+  },
+  "stages": {
+    "detection": {
+      "merchant_id": "merch_upi_smb",
+      "window": {
+        "start": "2026-08-10T17:53:16.504000+00:00",
+        "end": "2026-08-10T19:23:16.504000+00:00",
+        "duration_minutes": 90
+      },
+      "classification": "INCIDENT",
+      "severity": "MEDIUM",
+      "candidate_segment": {
+        "payment_method": "UPI",
+        "bank": "BANK_X",
+        "device": "ANDROID",
+        "upi_app": null,
+        "attempts": 41,
+        "success_rate": 0.7804878048780488
+      },
+      "sample": {
+        "attempts": 242,
+        "sufficiency": "SUFFICIENT"
+      },
+      "success_rate_signal": {
+        "baseline": 0.9255639097744361,
+        "current": 0.7804878048780488,
+        "difference": -0.14507610489638734,
+        "difference_percentage_points": -14.507610489638733,
+        "relative_change": -0.15674347645182385,
+        "statistically_significant": true,
+        "p_value": 0.00046237765778212037,
+        "z_score": -3.5016551566316734
+      },
+      "technical_error_signal": {
+        "baseline_rate": 0.009210526315789475,
+        "current_rate": 0.12195121951219513,
+        "absolute_change": 0.11274069319640566,
+        "relative_change": 12.240418118466899,
+        "status": "CRITICAL"
+      },
+      "customer_error_signal": {
+        "baseline_rate": 0.059398496240601506,
+        "current_rate": 0.07317073170731707,
+        "absolute_change": 0.013772235466715563,
+        "status": "INCREASED"
+      },
+      "localization_signal": {
+        "affected_segment": "UPI|BANK_X|ANDROID",
+        "affected_segment_success_rate": 0.7804878048780488,
+        "other_banks": null,
+        "other_devices": null,
+        "other_methods": 0.9212962962962963,
+        "status": "LOCALIZED"
+      },
+      "volume_signal": {
+        "baseline_expected": 23.75,
+        "current": 41,
+        "absolute_change": 17.25,
+        "change_pct": 0.7263157894736842,
+        "status": "SIGNIFICANT_INCREASE"
+      },
+      "latency_signal": {
+        "baseline_p95_ms": 750.1900751879699,
+        "current_p95_ms": 1032,
+        "absolute_change_ms": 281.8099248120301,
+        "relative_change": 0.3756513637446069,
+        "status": "ELEVATED"
+      },
+      "evidence": [
+        "Segment UPI|BANK_X|ANDROID success rate dropped 14.5 percentage points (baseline: 0.926, current: 0.780)",
+        "Success rate drop in UPI|BANK_X|ANDROID is statistically significant",
+        "Technical error rate status is CRITICAL (baseline: 0.009, current: 0.122)",
+        "P95 latency status is ELEVATED (baseline: 750.2ms, current: 1032.0ms)",
+        "Payment volume status is SIGNIFICANT_INCREASE (change: 72.6%)",
+        "Degradation appears localized to UPI|BANK_X|ANDROID"
+      ]
+    },
+    "evidence_package": {
+      "incident_metadata": {
+        "incident_id": "merch_upi_smb_20260810_175316",
+        "merchant_id": "merch_upi_smb",
+        "detection_timestamp": "2026-08-22T10:04:45.871717+00:00",
+        "analysis_window": {
+          "start": "2026-08-10T17:53:16.504000+00:00",
+          "end": "2026-08-10T19:23:16.504000+00:00",
+          "duration_minutes": 90
+        },
+        "severity": "MEDIUM",
+        "detector_classification": "INCIDENT",
+        "detector_confidence": "MEDIUM"
+      },
+      "affected_segment": {
+        "payment_method": "UPI",
+        "bank": "BANK_X",
+        "device": "ANDROID",
+        "upi_app": null,
+        "hierarchy_level": "METHOD_PLUS_TWO",
+        "baseline_attempts": 27164,
+        "baseline_success_rate": 0.9229126785451333,
+        "current_attempts": 41,
+        "current_success_rate": 0.7804878048780488,
+        "segment_key": "UPI|BANK_X|ANDROID|NULL"
+      },
+      "success_rate_evidence": {
+        "baseline_success_rate": 0.9229126785451333,
+        "current_success_rate": 0.7804878048780488,
+        "absolute_change": -0.14242487366708445,
+        "absolute_percentage_point_change": -14.242487366708446,
+        "relative_change": -0.15432107173086088,
+        "baseline_attempts": 27164,
+        "current_attempts": 41,
+        "statistical_significance": {
+          "statistically_significant": true,
+          "p_value": 0.0006445805438044516,
+          "z_score": 3.412127086429563,
+          "confidence_level": 0.95
+        },
+        "test_type": "two_proportion_z_test",
+        "interpretation": "Statistically significant moderate degradation"
+      },
+      "error_evidence": {
+        "baseline": {
+          "customer_error_rate": 0.0,
+          "technical_error_rate": 0.0,
+          "other_error_rate": 0.0,
+          "failure_rate": 0.0781944531396732,
+          "failure_breakdown": {
+            "customer_caused": 0,
+            "technical": 0,
+            "other": 0
+          }
+        },
+        "current": {
+          "customer_error_rate": 0.049586776859504134,
+          "technical_error_rate": 0.0371900826446281,
+          "other_error_rate": 0.008264462809917356,
+          "failure_rate": 0.09504132231404959,
+          "failure_breakdown": {
+            "customer_caused": 12,
+            "technical": 9,
+            "other": 2
+          }
+        },
+        "changes": {
+          "customer_error_rate_change": 0.049586776859504134,
+          "technical_error_rate_change": 0.0371900826446281,
+          "other_error_rate_change": 0.008264462809917356,
+          "customer_error_relative_change": 0.0,
+          "technical_error_relative_change": 0.0
+        },
+        "error_code_distribution": {
+          "INSUFFICIENT_FUNDS": 3,
+          "UNKNOWN_ERROR": 2,
+          "OTP_FAILED": 5,
+          "UPI_TIMEOUT": 3,
+          "BANK_TECHNICAL_ERROR": 2,
+          "WRONG_PIN": 2,
+          "GATEWAY_ERROR": 3,
+          "USER_CANCELLED": 2,
+          "NETWORK_ERROR": 1
+        },
+        "error_code_shifts": {
+          "note": "Baseline error code distribution extraction not implemented in this version",
+          "current_distribution": {
+            "INSUFFICIENT_FUNDS": 3,
+            "UNKNOWN_ERROR": 2,
+            "OTP_FAILED": 5,
+            "UPI_TIMEOUT": 3,
+            "BANK_TECHNICAL_ERROR": 2,
+            "WRONG_PIN": 2,
+            "GATEWAY_ERROR": 3,
+            "USER_CANCELLED": 2,
+            "NETWORK_ERROR": 1
+          }
+        }
+      },
+      "localization_evidence": {
+        "affected_segment": {
+          "payment_method": "UPI|BANK_X|ANDROID",
+          "bank": null,
+          "device": null,
+          "upi_app": null,
+          "success_rate": 0.7804878048780488,
+          "attempts": 0
+        },
+        "localization_status": "LOCALIZED",
+        "control_analysis": {
+          "status": "WIDESPREAD",
+          "message": "Degradation also seen in: Other upi_apps (same bank=BANK_X, device=ANDROID)",
+          "control_segments": {
+            "Other upi_apps (same bank=BANK_X, device=ANDROID)": {
+              "attempts": 41,
+              "successes": 32,
+              "success_rate": 0.7804878048780488,
+              "status": "DEGRADED"
+            }
+          }
+        },
+        "sibling_analysis": {
+          "note": "Sibling analysis placeholder - would compare same-level segments",
+          "analysis_needed": true
+        },
+        "interpretation": "Degradation is isolated to the specific segment - suggests localized issue"
+      },
+      "temporal_evidence": {
+        "analysis_type": "temporal_trend_analysis",
+        "window_duration_minutes": 90.0,
+        "bucket_size_minutes": 5,
+        "num_buckets": 18,
+        "buckets": [
+          {
+            "start": "2026-08-10T17:53:16.504000+00:00",
+            "end": "2026-08-10T17:58:16.504000+00:00",
+            "attempts": 8,
+            "success_rate": 1.0,
+            "failure_rate": 0.0,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T17:58:16.504000+00:00",
+            "end": "2026-08-10T18:03:16.504000+00:00",
+            "attempts": 16,
+            "success_rate": 0.9375,
+            "failure_rate": 0.0625,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0625
+          },
+          {
+            "start": "2026-08-10T18:03:16.504000+00:00",
+            "end": "2026-08-10T18:08:16.504000+00:00",
+            "attempts": 10,
+            "success_rate": 1.0,
+            "failure_rate": 0.0,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:08:16.504000+00:00",
+            "end": "2026-08-10T18:13:16.504000+00:00",
+            "attempts": 15,
+            "success_rate": 0.8,
+            "failure_rate": 0.2,
+            "technical_error_rate": 0.06666666666666667,
+            "customer_error_rate": 0.06666666666666667
+          },
+          {
+            "start": "2026-08-10T18:13:16.504000+00:00",
+            "end": "2026-08-10T18:18:16.504000+00:00",
+            "attempts": 13,
+            "success_rate": 0.8461538461538461,
+            "failure_rate": 0.15384615384615385,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.07692307692307693
+          },
+          {
+            "start": "2026-08-10T18:18:16.504000+00:00",
+            "end": "2026-08-10T18:23:16.504000+00:00",
+            "attempts": 13,
+            "success_rate": 0.9230769230769231,
+            "failure_rate": 0.07692307692307693,
+            "technical_error_rate": 0.07692307692307693,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:23:16.504000+00:00",
+            "end": "2026-08-10T18:28:16.504000+00:00",
+            "attempts": 17,
+            "success_rate": 0.8823529411764706,
+            "failure_rate": 0.11764705882352941,
+            "technical_error_rate": 0.11764705882352941,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:28:16.504000+00:00",
+            "end": "2026-08-10T18:33:16.504000+00:00",
+            "attempts": 15,
+            "success_rate": 0.8666666666666667,
+            "failure_rate": 0.13333333333333333,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.13333333333333333
+          },
+          {
+            "start": "2026-08-10T18:33:16.504000+00:00",
+            "end": "2026-08-10T18:38:16.504000+00:00",
+            "attempts": 9,
+            "success_rate": 0.7777777777777778,
+            "failure_rate": 0.2222222222222222,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.2222222222222222
+          },
+          {
+            "start": "2026-08-10T18:38:16.504000+00:00",
+            "end": "2026-08-10T18:43:16.504000+00:00",
+            "attempts": 11,
+            "success_rate": 0.8181818181818182,
+            "failure_rate": 0.18181818181818182,
+            "technical_error_rate": 0.09090909090909091,
+            "customer_error_rate": 0.09090909090909091
+          },
+          {
+            "start": "2026-08-10T18:43:16.504000+00:00",
+            "end": "2026-08-10T18:48:16.504000+00:00",
+            "attempts": 14,
+            "success_rate": 1.0,
+            "failure_rate": 0.0,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:48:16.504000+00:00",
+            "end": "2026-08-10T18:53:16.504000+00:00",
+            "attempts": 13,
+            "success_rate": 0.8461538461538461,
+            "failure_rate": 0.15384615384615385,
+            "technical_error_rate": 0.15384615384615385,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:53:16.504000+00:00",
+            "end": "2026-08-10T18:58:16.504000+00:00",
+            "attempts": 13,
+            "success_rate": 1.0,
+            "failure_rate": 0.0,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T18:58:16.504000+00:00",
+            "end": "2026-08-10T19:03:16.504000+00:00",
+            "attempts": 16,
+            "success_rate": 0.9375,
+            "failure_rate": 0.0625,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0625
+          },
+          {
+            "start": "2026-08-10T19:03:16.504000+00:00",
+            "end": "2026-08-10T19:08:16.504000+00:00",
+            "attempts": 14,
+            "success_rate": 0.8571428571428571,
+            "failure_rate": 0.14285714285714285,
+            "technical_error_rate": 0.14285714285714285,
+            "customer_error_rate": 0.0
+          },
+          {
+            "start": "2026-08-10T19:08:16.504000+00:00",
+            "end": "2026-08-10T19:13:16.504000+00:00",
+            "attempts": 14,
+            "success_rate": 0.9285714285714286,
+            "failure_rate": 0.07142857142857142,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.07142857142857142
+          },
+          {
+            "start": "2026-08-10T19:13:16.504000+00:00",
+            "end": "2026-08-10T19:18:16.504000+00:00",
+            "attempts": 17,
+            "success_rate": 0.8823529411764706,
+            "failure_rate": 0.11764705882352941,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.11764705882352941
+          },
+          {
+            "start": "2026-08-10T19:18:16.504000+00:00",
+            "end": "2026-08-10T19:23:16.504000+00:00",
+            "attempts": 14,
+            "success_rate": 1.0,
+            "failure_rate": 0.0,
+            "technical_error_rate": 0.0,
+            "customer_error_rate": 0.0
+          }
+        ],
+        "trends": {
+          "success_rate": "STABLE",
+          "technical_error_rate": "STABLE",
+          "customer_error_rate": "STABLE"
+        },
+        "persistence_analysis": {
+          "analysis": "INTERMITTENT",
+          "consecutive_degraded_buckets": 3,
+          "max_consecutive_degraded": 2,
+          "persistence_score": 0.1111111111111111,
+          "degradation_threshold": 0.831161426724565,
+          "mean_success_rate": 0.9057461692265614
+        },
+        "first_degradation_detected": "2026-08-10T18:08:16.504000+00:00",
+        "is_persistent": false
+      },
+      "volume_evidence": {
+        "baseline_expected_volume": 142.61607142857144,
+        "current_volume": 242,
+        "absolute_change": 99.38392857142856,
+        "change_percentage": 69.68634570838287,
+        "volume_status": "SIGNIFICANT_INCREASE",
+        "interpretation": "Significant volume increase - may indicate retry storms or promotional activity",
+        "baseline_daily_rate": 2281.8571428571427,
+        "analysis_window_minutes": 90.0
+      },
+      "latency_evidence": {
+        "baseline": {
+          "p95_latency_ms": 750.1900751879699,
+          "average_latency_ms": 458.39640700927697,
+          "details": {
+            "average_latency_ms": 458.39640700927697,
+            "p95_latency_ms": 757.85,
+            "latency_variability": {}
+          }
+        },
+        "current": {
+          "p95_latency_ms": 1032,
+          "average_latency_ms": 518.2439024390244,
+          "details": {
+            "average_latency_ms": 518.2439024390244,
+            "p95_latency_ms": 1032,
+            "latency_variability": {
+              "mean": 518.2439024390244,
+              "stddev": 271.93453076869486,
+              "min": 151,
+              "max": 1317
+            }
+          }
+        },
+        "changes": {
+          "absolute_change_ms": 281.8099248120301,
+          "relative_change": 0.3756513637446069,
+          "change_percentage": 37.56513637446069
+        },
+        "latency_status": "ELEVATED",
+        "interpretation": "Latency status: ELEVATED",
+        "technical_failure_latency": 830.6
+      },
+      "impact_evidence": {
+        "affected_attempts": {
+          "baseline": 27164,
+          "current": 41,
+          "change": -27123,
+          "change_percentage": -99.84906493888971
+        },
+        "successful_payments": {
+          "baseline_expected": 111.91964285714285,
+          "current_actual": 32.0,
+          "shortfall": 79.91964285714285,
+          "percentage_shortfall": 71.40805743917032
+        },
+        "average_transaction_amount": {
+          "rupees": 1240.1324473567956,
+          "paise": 124013
+        },
+        "revenue_at_risk": {
+          "paise": 9911095,
+          "rupees": 99110.95
+        },
+        "calculation_method": "Deterministic as per requirements:",
+        "formula": {
+          "expected_successful_revenue": "baseline_success_rate \u00d7 affected_attempts \u00d7 average_amount",
+          "actual_successful_revenue": "actual_successful_payments \u00d7 average_amount",
+          "revenue_at_risk": "Expected Successful Revenue - Actual Successful Revenue"
+        },
+        "note": "All monetary values are integer paise internally as required"
+      },
+      "sample_payments": [
+        {
+          "payment_id": "pay_a858e5f44195",
+          "order_id": "order_a7904b7fe64d",
+          "timestamp": "2026-08-10T18:39:25Z",
+          "payment_method": "UPI",
+          "bank": "BANK_X",
+          "device": "ANDROID",
+          "upi_app": "PAYTM",
+          "status": "success",
+          "error_code": null,
+          "amount": 118880,
+          "latency_ms": 634
+        },
+        {
+          "payment_id": "pay_db9ae9580012",
+          "order_id": "order_379746e4d7df",
+          "timestamp": "2026-08-10T18:12:01Z",
+          "payment_method": "UPI",
+          "bank": "BANK_X",
+          "device": "IOS",
+          "upi_app": "OTHER",
+          "status": "success",
+          "error_code": null,
+          "amount": 155014,
+          "latency_ms": 339
+        },
+        {
+          "payment_id": "pay_919ecf74d685",
+          "order_id": "order_b4f1352651a6",
+          "timestamp": "2026-08-10T18:29:42Z",
+          "payment_method": "UPI",
+          "bank": "HDFC",
+          "device": "ANDROID",
+          "upi_app": "PHONEPE",
+          "status": "failed",
+          "error_code": "INSUFFICIENT_FUNDS",
+          "amount": 27765,
+          "latency_ms": 1639
+        },
+        {
+          "payment_id": "pay_204d84bdfbfd",
+          "order_id": "order_f462a737eae4",
+          "timestamp": "2026-08-10T18:16:34Z",
+          "payment_method": "CARD",
+          "bank": null,
+          "device": "ANDROID",
+          "upi_app": null,
+          "status": "failed",
+          "error_code": "UNKNOWN_ERROR",
+          "amount": 6077,
+          "latency_ms": 1383
+        },
+        {
+          "payment_id": "pay_47bc53978d88",
+          "order_id": "order_16138858c4fb",
+          "timestamp": "2026-08-10T18:09:00Z",
+          "payment_method": "UPI",
+          "bank": "ICICI",
+          "device": "ANDROID",
+          "upi_app": "PHONEPE",
+          "status": "success",
+          "error_code": null,
+          "amount": 6204,
+          "latency_ms": 517
+        }
+      ],
+      "hypothesis_evidence": [
+        {
+          "hypothesis": "Localized UPI issue",
+          "details": "Affecting BANK_X ANDROID None",
+          "status": "SUPPORTED",
+          "supporting_signals": [
+            "Localization evidence indicates degradation is isolated to specific segment",
+            "Technical error rate is elevated",
+            "Success rate drop is statistically significant",
+            "Success rate drop (14.5 pp) exceeds warning threshold"
+          ],
+          "contradicting_signals": [],
+          "assessment": "Evidence supports localized technical issue"
+        },
+        {
+          "hypothesis": "Widespread systemic issue affecting multiple payment methods/banks/devices",
+          "status": "PARTIALLY_SUPPORTED",
+          "supporting_signals": [
+            "Volume increase may indicate retry storms or systemic issues",
+            "Success rate drop is statistically significant"
+          ],
+          "contradicting_signals": [
+            "Localization evidence shows degradation is localized",
+            "Cannot determine if multiple methods affected without multi-method analysis"
+          ],
+          "assessment": "Some evidence supports widespread hypothesis but contradicting evidence exists"
+        },
+        {
+          "hypothesis": "Technical infrastructure issue (bank/gateway/network problems)",
+          "status": "SUPPORTED",
+          "supporting_signals": [
+            "Technical error rate is elevated",
+            "Technical error status: CRITICAL",
+            "Success rate is decreasing (consistent with technical issues)",
+            "Technical error increase correlates with success rate decrease"
+          ],
+          "contradicting_signals": [],
+          "assessment": "Evidence supports technical infrastructure issue"
+        },
+        {
+          "hypothesis": "User-side/customer issue (insufficient funds, wrong PIN, etc.)",
+          "status": "SUPPORTED",
+          "supporting_signals": [
+            "Customer-caused error rate is significantly elevated",
+            "Customer error increase: 1.4 percentage points",
+            "Success rate is decreasing (consistent with customer issues causing failures)"
+          ],
+          "contradicting_signals": [
+            "Technical error rate is elevated (suggests technical issue, not customer-side)"
+          ],
+          "assessment": "Evidence supports user-side/customer issue"
+        },
+        {
+          "hypothesis": "Volume anomaly or latency issue",
+          "status": "PARTIALLY_SUPPORTED",
+          "supporting_signals": [
+            "Volume significantly increased",
+            "Volume change: 72.6%",
+            "Volume change correlated with success rate decrease"
+          ],
+          "contradicting_signals": [],
+          "assessment": "Some evidence supports volume or latency hypothesis"
+        }
+      ],
+      "investigation_checklist": [
+        {
+          "check": "statistical_significance",
+          "result": "PASS",
+          "finding": "Success rate drop is statistically significant (p-value: 0.0005)",
+          "evidence_refs": [
+            "success_rate_evidence.statistical_significance"
+          ]
+        },
+        {
+          "check": "meaningful_degradation",
+          "result": "PASS",
+          "finding": "Success rate dropped 14.5 percentage points (threshold: 5.0 pp)",
+          "evidence_refs": [
+            "success_rate_evidence.absolute_percentage_point_change"
+          ]
+        },
+        {
+          "check": "localization_assessment",
+          "result": "PASS",
+          "finding": "Degradation is localized",
+          "evidence_refs": [
+            "localization_evidence.localization_status"
+          ]
+        },
+        {
+          "check": "hierarchy_level",
+          "result": "PASS",
+          "finding": "Best explained at Method Plus Two level",
+          "evidence_refs": [
+            "affected_segment.hierarchy_level"
+          ]
+        },
+        {
+          "check": "other_banks_healthy",
+          "result": "PASS",
+          "finding": "Other banks status: HEALTHY",
+          "evidence_refs": [
+            "localization_evidence.control_analysis.status"
+          ]
+        },
+        {
+          "check": "other_devices_healthy",
+          "result": "PASS",
+          "finding": "Other devices status: HEALTHY (placeholder)",
+          "evidence_refs": [
+            "localization_evidence.control_analysis.status"
+          ]
+        },
+        {
+          "check": "other_payment_methods_healthy",
+          "result": "PASS",
+          "finding": "Other payment methods status: HEALTHY (placeholder - would need multi-method analysis)",
+          "evidence_refs": [
+            "localization_evidence.other_methods"
+          ]
+        },
+        {
+          "check": "technical_error_increase",
+          "result": "PASS",
+          "finding": "Technical error rate status: CRITICAL",
+          "evidence_refs": [
+            "error_evidence.current.technical_error_rate",
+            "error_evidence.changes.technical_error_rate_change"
+          ]
+        },
+        {
+          "check": "customer_error_increase",
+          "result": "PASS",
+          "finding": "Customer-caused error rate changed by 1.4 percentage points",
+          "evidence_refs": [
+            "error_evidence.changes.customer_error_rate_change"
+          ]
+        },
+        {
+          "check": "latency_change",
+          "result": "PASS",
+          "finding": "Latency status: ELEVATED",
+          "evidence_refs": [
+            "latency_evidence.changes.relative_change"
+          ]
+        },
+        {
+          "check": "volume_change",
+          "result": "PASS",
+          "finding": "Volume status: SIGNIFICANT_INCREASE (72.6% change)",
+          "evidence_refs": [
+            "volume_evidence.change_percentage"
+          ]
+        },
+        {
+          "check": "persistence_over_time",
+          "result": "FAIL",
+          "finding": "Degradation persistence: INTERMITTENT",
+          "evidence_refs": [
+            "temporal_evidence.is_persistent"
+          ]
+        },
+        {
+          "check": "contradicting_signals",
+          "result": "PASS",
+          "finding": "Contradicting signals: None",
+          "evidence_refs": [
+            "technical_evidence",
+            "customer_evidence",
+            "latency_evidence",
+            "volume_evidence"
+          ]
+        },
+        {
+          "check": "sample_size_sufficiency",
+          "result": "PASS",
+          "finding": "Sample size: 242 attempts (SUFFICIENT)",
+          "evidence_refs": [
+            "sample.attempts",
+            "sample.sufficiency"
+          ]
+        },
+        {
+          "check": "primarily_customer_caused",
+          "result": "PASS",
+          "finding": "Event is not primarily customer-caused (customer change: 1.4pp, technical change: 11.3pp)",
+          "evidence_refs": [
+            "error_evidence.changes.customer_error_rate_change",
+            "error_evidence.changes.technical_error_rate_change"
+          ]
+        }
+      ],
+      "schema_info": {
+        "version": "1.0.0",
+        "generated_at": "2026-08-22T10:04:45.873083+00:00",
+        "deterministic": true
+      }
+    },
+    "llm_report": {
+      "incident_id": "merch_upi_smb_20260810_175316",
+      "severity": "MEDIUM",
+      "status": "ACTION_PROPOSED",
+      "summary": {
+        "title": "Payment Processing Degradation Detected - INCIDENT",
+        "what_happened": "Payment success rate showed incident pattern with elevated error rates",
+        "where": {
+          "payment_method": "UPI",
+          "bank": "BANK_X",
+          "device": "ANDROID",
+          "upi_app": null
+        },
+        "confidence": 0.85,
+        "confidence_level": "HIGH",
+        "confidence_explanation": "Based on analysis of success rate trends, error patterns, and statistical significance",
+        "evidence_summary": [
+          "Success rate changed from 92.3% to 78.0%",
+          "Technical error rate changed from 0.0% to 3.7%",
+          "Issue localized to UPI segment"
+        ]
+      },
+      "likely_cause": {
+        "primary": "Technical infrastructure issue detected in payment processing - elevated error rates and decreased success rate",
+        "confidence": 0.765,
+        "evidence_refs": [
+          "success_rate_evidence.relative_change",
+          "error_evidence.changes.technical_error_rate_change"
+        ]
+      },
+      "alternative_hypotheses": [
+        {
+          "hypothesis": "Customer-side payment issues",
+          "assessment": "CONTRADICTED",
+          "explanation": "Customer error rates did not show significant increase",
+          "evidence_refs": [
+            "error_evidence.changes.customer_error_rate_change"
+          ]
+        }
+      ],
+      "recommended_next_steps": [
+        "Monitor payment success rate for the next 15-20 minutes",
+        "Check with payment gateway for any known issues",
+        "Prepare customer communication if issue persists"
+      ],
+      "recovery": {
+        "eligible": true,
+        "recommendation": "PAYMENT_LINK",
+        "reason": "To compensate affected users for service degradation"
+      },
+      "timeline": [
+        {
+          "time": "2026-08-22T10:04:45.871717+00:00",
+          "event": "Incident detected by automated monitoring"
+        },
+        {
+          "time": "2026-08-22T10:04:45.873331+00:00",
+          "event": "Forensic analysis completed"
+        }
+      ]
+    },
+    "policy_decision": {
+      "incident_id": "merch_upi_smb_20260810_175316",
+      "decision": "HUMAN_APPROVAL",
+      "action_type": "PAYMENT_LINK",
+      "reason_codes": [
+        "HIGH_CONFIDENCE",
+        "HIGH_REVENUE_RISK",
+        "LOCALIZED_INCIDENT",
+        "CONTRADICTORY_EVIDENCE",
+        "INCIDENT_CONFIRMED",
+        "SUFFICIENT_SAMPLE",
+        "TECHNICAL_EVIDENCE_PRESENT"
+      ],
+      "human_readable_reason": "Decision is based on the following factors: LLM confidence meets or exceeds threshold for auto-approval; Revenue at risk exceeds the limit for auto-approval; Incident is localized to a specific segment; Investigation checklist contains contradictory evidence; Detector classification is INCIDENT; Baseline sample size is sufficient for statistical decisions; Technical error evidence supports the incident.",
+      "policy_version": "v1",
+      "evaluated_at": "2026-08-22T10:04:45.873374+00:00",
+      "evidence_refs": []
+    },
+    "recovery_execution": {
+      "state": "NOT_AUTHORIZED",
+      "reason": "Policy Engine did not authorize recovery action"
+    }
+  },
+  "summary": {
+    "incident_id": "merch_upi_smb",
+    "detector_classification": "INCIDENT",
+    "detector_severity": "MEDIUM",
+    "affected_segment": {
+      "payment_method": "UPI",
+      "bank": "BANK_X",
+      "device": "ANDROID",
+      "upi_app": null,
+      "attempts": 41,
+      "success_rate": 0.7804878048780488
+    },
+    "key_evidence": [
+      "Segment UPI|BANK_X|ANDROID success rate dropped 14.5 percentage points (baseline: 0.926, current: 0.780)",
+      "Success rate drop in UPI|BANK_X|ANDROID is statistically significant",
+      "Technical error rate status is CRITICAL (baseline: 0.009, current: 0.122)"
+    ],
+    "llm_likely_cause": "Technical infrastructure issue detected in payment processing - elevated error rates and decreased success rate",
+    "llm_confidence": 0.85,
+    "policy_decision": "HUMAN_APPROVAL",
+    "authorized_recovery_action": "PAYMENT_LINK",
+    "recovery_state": "NOT_AUTHORIZED",
+    "recovery_id": null,
+    "payment_link_id": null,
+    "recovered_amount_paise": 0,
+    "recovered_amount_rupees": 0.0,
+    "audit_trail_events": 0,
+    "audit_trail_summary": []
+  },
+  "success": true
+}

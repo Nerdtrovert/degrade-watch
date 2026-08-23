@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supportAPI, SupportIncident } from '../api/support';
+import { supportAPI, SupportIncident } from '../../api/support';
 
 const SupportIncidentConsole: React.FC = () => {
   const [incidents, setIncidents] = useState<SupportIncident[]>([]);

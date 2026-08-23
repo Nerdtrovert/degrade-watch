@@ -21,7 +21,7 @@ from app.auth import get_current_active_user, get_current_merchant_id, require_r
 
 # Import database and services
 from app.database import get_async_db, AsyncSession, SyncSessionLocal, sync_engine
-from app.models import Base, AuditEvent
+from app.models import Base, AuditEvent, User
 from app.services.incident_service import IncidentService
 from app.services.evidence_package_service import EvidencePackageService
 from app.services.forensic_report_service import ForensicReportService
@@ -636,8 +636,8 @@ async def get_merchant_incident_detail(
             raise NotFoundException(f"Incident not found: {incident_id}")
 
         # Verify that the incident belongs to the current merchant
-        if incident.merchant_id != merchant_id:
-            raise AuthorizationException(f"Access denied: Incident does not belong to your merchant")
+        if incident.merchant and incident.merchant.merchant_id != merchant_id:
+            raise AuthorizationException("Access denied: Incident does not belong to your merchant")
 
         ev_pkg = incident.evidence_package.evidence_package if incident.evidence_package else {}
         report = incident.forensic_report.report if incident.forensic_report else {}
@@ -946,7 +946,7 @@ async def get_approval_detail(
             raise NotFoundException(f"Approval not found: {approval_id}")
 
         # Verify that the incident belongs to the current merchant
-        if incident.merchant_id != merchant_id:
+        if incident.merchant_id != current_user.merchant_id:
             raise AuthorizationException(f"Access denied: Approval does not belong to your merchant")
 
         pol = incident.policy_decision
@@ -1028,7 +1028,7 @@ async def approve_approval(
             raise NotFoundException(f"Approval not found: {approval_id}")
 
         # Verify that the incident belongs to the current merchant
-        if incident.merchant_id != merchant_id:
+        if incident.merchant_id != current_user.merchant_id:
             raise AuthorizationException(f"Access denied: Approval does not belong to your merchant")
 
         policy_decision = incident.policy_decision
@@ -1077,7 +1077,7 @@ async def approve_approval(
 
         # Initialize recovery engine with db session
         recovery_engine = RecoveryEngine(db_session=db)
-        recovery_result = recovery_engine.execute_recovery(
+        recovery_result = await recovery_engine.execute_recovery(
             policy_decision=pol_dict,
             evidence_package=ev_pkg,
             llm_report=report_dict
@@ -1135,7 +1135,7 @@ async def reject_approval(
             raise NotFoundException(f"Approval not found: {approval_id}")
 
         # Verify that the incident belongs to the current merchant
-        if incident.merchant_id != merchant_id:
+        if incident.merchant_id != current_user.merchant_id:
             raise AuthorizationException(f"Access denied: Approval does not belong to your merchant")
 
         policy_decision = incident.policy_decision

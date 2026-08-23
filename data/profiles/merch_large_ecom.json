@@ -1,0 +1,50 @@
+{
+  "merchant_id": "merch_large_ecom",
+  "name": "Large E-commerce",
+  "method_distribution": {
+    "UPI": 0.25,
+    "CARD": 0.65,
+    "NETBANKING": 0.10
+  },
+  "baseline_success_rates": {
+    "overall": 0.935,
+    "UPI": 0.930,
+    "CARD": 0.945,
+    "NETBANKING": 0.880
+  },
+  "normal_variance": {
+    "overall": 0.015,
+    "UPI": 0.015,
+    "CARD": 0.015,
+    "NETBANKING": 0.015
+  },
+  "device_distribution": {
+    "ANDROID": 0.55,
+    "IOS": 0.30,
+    "WEB": 0.15
+  },
+  "upi_app_distribution": {
+    "PHONEPE": 0.38,
+    "GPAY": 0.32,
+    "PAYTM": 0.18,
+    "OTHER": 0.12
+  },
+  "upi_bank_distribution": {
+    "BANK_X": 0.22,
+    "HDFC": 0.18,
+    "SBI": 0.15,
+    "ICICI": 0.12,
+    "OTHER": 0.33
+  },
+  "daily_volume": {
+    "min": 9000,
+    "max": 11500
+  },
+  "peak_hours": [11, 12, 13, 19, 20, 21],
+  "traffic_profile": "large_ecommerce",
+  "normal_error_profile": {
+    "customer_caused": 0.80,
+    "technical": 0.10,
+    "other": 0.10
+  }
+}

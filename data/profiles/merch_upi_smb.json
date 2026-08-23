@@ -1,0 +1,50 @@
+{
+  "merchant_id": "merch_upi_smb",
+  "name": "UPI-heavy Indian SMB",
+  "method_distribution": {
+    "UPI": 0.85,
+    "CARD": 0.10,
+    "NETBANKING": 0.05
+  },
+  "baseline_success_rates": {
+    "overall": 0.920,
+    "UPI": 0.922,
+    "CARD": 0.935,
+    "NETBANKING": 0.870
+  },
+  "normal_variance": {
+    "overall": 0.015,
+    "UPI": 0.015,
+    "CARD": 0.015,
+    "NETBANKING": 0.015
+  },
+  "device_distribution": {
+    "ANDROID": 0.70,
+    "IOS": 0.15,
+    "WEB": 0.15
+  },
+  "upi_app_distribution": {
+    "PHONEPE": 0.42,
+    "GPAY": 0.30,
+    "PAYTM": 0.15,
+    "OTHER": 0.13
+  },
+  "upi_bank_distribution": {
+    "BANK_X": 0.28,
+    "SBI": 0.20,
+    "HDFC": 0.14,
+    "ICICI": 0.10,
+    "OTHER": 0.28
+  },
+  "daily_volume": {
+    "min": 1800,
+    "max": 2800
+  },
+  "peak_hours": [12, 13, 14, 18, 19, 20],
+  "traffic_profile": "upi_smb",
+  "normal_error_profile": {
+    "customer_caused": 0.80,
+    "technical": 0.10,
+    "other": 0.10
+  }
+}

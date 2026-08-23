@@ -99,3 +99,16 @@ class RecoveryRepository:
         """Delete a recovery."""
         await self.db.delete(recovery)
         await self.db.commit()
+
+    async def delete_older_than(self, timestamp) -> int:
+        """Delete recoveries created older than given timestamp."""
+        result = await self.db.execute(
+            select(Recovery).filter(Recovery.created_at < timestamp)
+        )
+        records = result.scalars().all()
+        count = len(records)
+        for r in records:
+            await self.db.delete(r)
+        await self.db.commit()
+        return count
+        await self.db.commit()

@@ -11,9 +11,10 @@ import logging
 import os
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import Dict, Any, Optional, Tuple
 from enum import Enum
+from sqlalchemy import select
 
 # Try to import razorpay, but handle gracefully if not available (for testing)
 try:
@@ -100,7 +101,7 @@ class RecoveryEngine:
             Recovery execution result with state, payment link details, and audit trail
         """
         # Generate unique recovery ID for idempotency
-        recovery_id = f"rec_{uuid.uuid4().hex[:12]}"
+        recovery_id = str(uuid.uuid4())
         incident_id = evidence_package.get("incident_metadata", {}).get("incident_id", "unknown")
 
         logger.info(f"Starting recovery execution for incident {incident_id} with recovery ID {recovery_id}")
@@ -170,9 +171,13 @@ class RecoveryEngine:
 
         # Store the record in database
         from app.models.recovery import Recovery
+
+        rec_uuid = self._resolve_recovery_db_id(recovery_record["recovery_id"])
+        inc_uuid = await self._resolve_incident_db_id(recovery_record["incident_id"])
+
         recovery_model = Recovery(
-            id=uuid.UUID(recovery_record["recovery_id"]),
-            incident_id=uuid.UUID(incident_id),
+            id=rec_uuid,
+            incident_id=inc_uuid,
             action_type=recovery_record["action_type"],
             amount_paise=0,  # Will be updated after processing
             currency="INR",  # Will be updated after processing
@@ -843,6 +848,41 @@ class RecoveryEngine:
                 "error": recovery_model.error_message
             }
 
+    def _resolve_recovery_db_id(self, recovery_id_str: str) -> uuid.UUID:
+        """Resolve recovery_id string to UUID PK for Recovery model."""
+        if not recovery_id_str:
+            return uuid.uuid4()
+        try:
+            return uuid.UUID(str(recovery_id_str))
+        except (ValueError, TypeError, AttributeError):
+            pass
+        return uuid.uuid5(uuid.NAMESPACE_DNS, str(recovery_id_str))
+
+    async def _resolve_incident_db_id(self, incident_id_str: str) -> uuid.UUID:
+        """
+        Resolve business incident_id string to internal database Incident UUID PK.
+        Preserves referential integrity when saving to PostgreSQL.
+        """
+        if not incident_id_str:
+            return uuid.uuid4()
+
+        try:
+            from app.repositories.incident_repository import IncidentRepository
+            if hasattr(self, 'recovery_repository') and self.recovery_repository and hasattr(self.recovery_repository, 'db'):
+                incident_repo = IncidentRepository(self.recovery_repository.db)
+                incident_model = await incident_repo.get_by_id(incident_id_str)
+                if incident_model and hasattr(incident_model, 'id') and isinstance(incident_model.id, uuid.UUID):
+                    return incident_model.id
+        except Exception as e:
+            logger.debug(f"Could not fetch Incident from repository by incident_id '{incident_id_str}': {e}")
+
+        try:
+            return uuid.UUID(str(incident_id_str))
+        except (ValueError, TypeError, AttributeError):
+            pass
+
+        return uuid.uuid5(uuid.NAMESPACE_DNS, str(incident_id_str))
+
     async def get_recovery_record_async(self, recovery_id: str) -> Optional[Dict[str, Any]]:
         """Get a recovery record by ID (async version)."""
         recovery_model = await self.recovery_repository.get_by_id(recovery_id)
@@ -928,9 +968,16 @@ class RecoveryEngine:
             })
         return result
 
+    async def cleanup_old_records_async(self, older_than_hours: int = 24) -> int:
+        """Clean up old recovery records to prevent database buildup (async version)."""
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=older_than_hours)
+        return await self.recovery_repository.delete_older_than(cutoff)
+
     def cleanup_old_records(self, older_than_hours: int = 24) -> int:
-        """Clean up old recovery records to prevent memory buildup."""
-        # This would need to be implemented at the repository level
-        # For now, we'll just log that it's not implemented in the engine
-        logger.warning("cleanup_old_records not implemented in RecoveryEngine - should be handled at repository level")
-        return 0
+        """Clean up old recovery records (synchronous version)."""
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=older_than_hours)
+        try:
+            return asyncio.run(self.recovery_repository.delete_older_than(cutoff))
+        except Exception as e:
+            logger.warning(f"Failed to cleanup old records: {e}")
+            return 0

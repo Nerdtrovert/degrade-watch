@@ -4,7 +4,7 @@ Provides both synchronous (for Alembic migrations) and asynchronous (for applica
 """
 from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, DeclarativeAsyncSessionMaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
 from .config import db_config
 
 # Synchronous engine for Alembic migrations and any synchronous operations
@@ -16,20 +16,33 @@ sync_engine = create_engine(
     max_overflow=20
 )
 
+import sys
+from sqlalchemy.pool import NullPool
+
 # Asynchronous engine for the application
 # Convert the synchronous URL to asynchronous by changing the driver
 # Assuming the URL is postgresql://... we change to postgresql+asyncpg://
 async_database_url = db_config.url.replace("postgresql://", "postgresql+asyncpg://")
-async_engine = create_async_engine(
-    async_database_url,
-    echo=False,  # Set to True for debugging
-    pool_pre_ping=True,
-    pool_size=10,
-    max_overflow=20
-)
+
+if "pytest" in sys.modules or db_config.url.find("test") != -1:
+    async_engine = create_async_engine(
+        async_database_url,
+        echo=False,
+        poolclass=NullPool
+    )
+else:
+    async_engine = create_async_engine(
+        async_database_url,
+        echo=False,
+        pool_pre_ping=True,
+        pool_size=10,
+        max_overflow=20
+    )
 
 # Synchronous session factory for Alembic and synchronous operations
 SyncSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=sync_engine)
+# Backward compatibility alias
+SessionLocal = SyncSessionLocal
 
 # Asynchronous session factory for the application
 AsyncSessionLocal = sessionmaker(

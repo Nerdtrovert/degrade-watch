@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { approvalsAPI, ApprovalDetail } from '../api/approvals';
+import { approvalsAPI, ApprovalDetail } from '../../api/approvals';
 
 const ApprovalDetail: React.FC = () => {
   const { approvalId } = useParams<{ approvalId: string }>();

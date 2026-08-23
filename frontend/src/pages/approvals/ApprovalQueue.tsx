@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { approvalsAPI, Approval } from '../api/approvals';
+import { approvalsAPI, Approval } from '../../api/approvals';
 
 const ApprovalQueue: React.FC = () => {
   const [approvals, setApprovals] = useState<Approval[]>([]);

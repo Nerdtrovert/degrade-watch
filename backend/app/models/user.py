@@ -3,7 +3,7 @@ User model for DegradeWatch backend.
 """
 import uuid
 from typing import Optional, List
-from sqlalchemy import String, Text, Boolean
+from sqlalchemy import String, Text, Boolean, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -59,6 +59,7 @@ class User(Base):
     # Foreign key to merchant
     merchant_id: Mapped[Optional[uuid.UUID]] = mapped_column(
         UUID(as_uuid=True),
+        ForeignKey("merchants.id"),
         nullable=True
     )
 

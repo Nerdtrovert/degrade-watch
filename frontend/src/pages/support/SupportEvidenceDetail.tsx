@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { supportAPI } from '../api/support';
+import { supportAPI } from '../../api/support';
 
 const SupportEvidenceDetail: React.FC = () => {
   const { incidentId } = useParams<{ incidentId: string }>();

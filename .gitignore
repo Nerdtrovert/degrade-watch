@@ -1,42 +1,15 @@
-# Python
+# Python & Bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.pyo
 *.pyd
 .Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var*
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-.cache
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-.nox/
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
-.pytest_cache/
+*.bak
+*.backup
+*.orig
 
-# Virtual environments
+# Virtual Environments
 venv/
 ENV/
 env/
@@ -44,12 +17,10 @@ env/
 env.bak/
 venv.bak/
 
-# Node.js
+# Node.js & Frontend Build
 node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
+frontend/node_modules/
+frontend/dist/
 dist/
 build/
 .next/
@@ -62,13 +33,18 @@ build/
 .rts2_cache
 .rts2_temp
 .tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Environment variables
+# Environment Variables & Secrets
 .env
 .env.*
+backend/.env
 !example.env
 
-# IDEs and editors
+# IDEs, Editors & OS Files
 .vscode/
 .idea/
 *.swp
@@ -80,29 +56,25 @@ Thumbs.db
 # Docker
 docker-compose.override.yml
 
-# Logs
+# Logs & Temporary Files
 *.log
+backend/tmp/
+failed.md
 
-# Data files (generated data, not source)
-data/generated/
-data/profiles/*.json
-data/ground_truth/
-
-# Test artifacts
+# Testing & Coverage Artifacts
+.pytest_cache/
+.coverage
+.coverage.*
 htmlcov/
 .tox/
 .nox/
-.coverage
-.coverage.*
-.cache
 nosetests.xml
 coverage.xml
 *.cover
 *.py,cover
 .hypothesis/
-.pytest_cache/
 
-# Interview/Temporary notes
-Failed.md
-result_scenario_A.json
-result_scenario_E.json
+# Generated Data (not source)
+data/generated/
+data/ground_truth/failed.md
+

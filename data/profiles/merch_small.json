@@ -1,0 +1,50 @@
+{
+  "merchant_id": "merch_small",
+  "name": "Small / Long-tail Merchant",
+  "method_distribution": {
+    "UPI": 0.70,
+    "CARD": 0.25,
+    "NETBANKING": 0.05
+  },
+  "baseline_success_rates": {
+    "overall": 0.900,
+    "UPI": 0.905,
+    "CARD": 0.910,
+    "NETBANKING": 0.850
+  },
+  "normal_variance": {
+    "overall": 0.020,
+    "UPI": 0.020,
+    "CARD": 0.020,
+    "NETBANKING": 0.020
+  },
+  "device_distribution": {
+    "ANDROID": 0.65,
+    "IOS": 0.20,
+    "WEB": 0.15
+  },
+  "upi_app_distribution": {
+    "PHONEPE": 0.40,
+    "GPAY": 0.28,
+    "PAYTM": 0.18,
+    "OTHER": 0.14
+  },
+  "upi_bank_distribution": {
+    "BANK_X": 0.25,
+    "SBI": 0.18,
+    "HDFC": 0.10,
+    "ICICI": 0.08,
+    "OTHER": 0.39
+  },
+  "daily_volume": {
+    "min": 400,
+    "max": 700
+  },
+  "peak_hours": [],
+  "traffic_profile": "small_noisy",
+  "normal_error_profile": {
+    "customer_caused": 0.80,
+    "technical": 0.10,
+    "other": 0.10
+  }
+}
