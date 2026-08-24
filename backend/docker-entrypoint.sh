@@ -6,6 +6,10 @@ echo "Waiting for database to be ready..."
 
 echo "Database is up - continuing"
 
+# Run migrations
+echo "Running database migrations..."
+alembic -c backend/alembic.ini upgrade head
+
 # Check if we've already seeded (simple flag file approach)
 if [ ! -f /app/.seeded ]; then
   echo "Running database seeding..."

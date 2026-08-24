@@ -105,7 +105,7 @@ const SupportIncidentConsole: React.FC = () => {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Impact</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Policy</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Recovery</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sticky right-0 bg-slate-50 shadow-sm z-10">Action</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
@@ -139,7 +139,7 @@ const SupportIncidentConsole: React.FC = () => {
                     <td className="px-4 py-3 whitespace-nowrap">
                       {getRecoveryBadge(incident.recovery_status)}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right">
+                    <td className="px-4 py-3 whitespace-nowrap text-right sticky right-0 bg-white shadow-sm">
                       <Link
                         to={`/support/incidents/${incident.incident_id}`}
                         className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline px-2 py-1"
@@ -178,7 +178,7 @@ const SupportIncidentConsole: React.FC = () => {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Impact</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Policy</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">Recovery</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Action</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider sticky right-0 bg-slate-50 shadow-sm z-10">Action</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-slate-200">
@@ -212,7 +212,7 @@ const SupportIncidentConsole: React.FC = () => {
                     <td className="px-4 py-3 whitespace-nowrap">
                       {getRecoveryBadge(incident.recovery_status)}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right">
+                    <td className="px-4 py-3 whitespace-nowrap text-right sticky right-0 bg-white shadow-sm">
                       <Link
                         to={`/support/incidents/${incident.incident_id}`}
                         className="text-xs font-semibold text-blue-600 hover:text-blue-800 hover:underline px-2 py-1"
