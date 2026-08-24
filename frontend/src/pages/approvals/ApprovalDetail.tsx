@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { approvalsAPI, ApprovalDetail } from '../../api/approvals';
+import { approvalsAPI, ApprovalDetail as ApprovalDetailType } from '../../api/approvals';
 
 const ApprovalDetail: React.FC = () => {
   const { approvalId } = useParams<{ approvalId: string }>();
-  const [approval, setApproval] = useState<ApprovalDetail | null>(null);
+  const [approval, setApproval] = useState<ApprovalDetailType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 

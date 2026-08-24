@@ -715,7 +715,7 @@ class RecoveryEngine:
             "payment_link_reference_id": None,
             "amount_paise": 0,
             "amount_rupees": 0,
-            "currency": None,
+            "currency": "INR",
             "payment_status": None,
             "actual_recovered_paise": 0,
             "actual_recovered_rupees": 0,

@@ -20,7 +20,7 @@ class RecoveryRepository:
     async def get_by_id(self, recovery_id: str) -> Optional[Recovery]:
         """Get recovery by recovery_id."""
         result = await self.db.execute(
-            select(Recovery).filter(Recovery.recovery_id == recovery_id)
+            select(Recovery).filter(Recovery.id == recovery_id)
         )
         return result.scalars().first()
 

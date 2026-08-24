@@ -41,6 +41,7 @@ const Login: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <img src="/logo.svg" alt="DegradeWatch Logo" className="mx-auto h-16 w-auto mb-4" />
         <h2 className="text-center text-3xl font-extrabold text-slate-900 tracking-tight">DegradeWatch</h2>
         <p className="mt-2 text-center text-sm text-slate-600 font-medium uppercase tracking-widest">
           Payment Incident Response

@@ -1084,7 +1084,7 @@ async def approve_approval(
             raise ValidationException("Approval is not pending")
 
         # Mark recovery as processing immediately to prevent concurrent approvals
-        recovery.state = "PROCESSING"
+        # recovery.state = "PROCESSING"
 
         forensic_service = ForensicReportService(db)
         llm_report = await forensic_service.get_by_incident_id(incident_id)
