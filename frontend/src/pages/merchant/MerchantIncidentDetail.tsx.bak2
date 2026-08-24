@@ -70,7 +70,7 @@ const MerchantIncidentDetail: React.FC = () => {
       case 'AUTO_APPROVED': return <span className="badge-green">{decision}</span>;
       case 'HUMAN_APPROVAL': return <span className="badge-yellow">{decision}</span>;
       case 'BLOCKED': return <span className="badge-red">{decision}</span>;
-      default: return <span className="badge-neutral">{decision || 'NOT_APPLICABLE'}</span>;
+      default: return <span className="badge-neutral">{decision || 'PENDING'}</span>;
     }
   };
 
@@ -106,16 +106,16 @@ const MerchantIncidentDetail: React.FC = () => {
             <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 bg-white">
               <div>
                 <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Baseline SR</p>
-                <p className="text-lg font-bold text-slate-900">{(evidence?.success_rate_evidence?.baseline_success_rate * 100).toFixed(1)}%</p>
+                <p className="text-lg font-bold text-slate-900">{((evidence?.success_rate_evidence?.baseline_success_rate * 100).toFixed(1)}%</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Current SR</p>
-                <p className="text-lg font-bold text-slate-900">{(evidence?.success_rate_evidence?.current_success_rate * 100).toFixed(1)}%</p>
+                <p className="text-lg font-bold text-slate-900">{((evidence?.success_rate_evidence?.current_success_rate * 100).toFixed(1)}%</p>
               </div>
               <div>
                 <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Delta</p>
                 <p className={`text-lg font-bold ${srChange < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
-                  {srChange > 0 ? '+' : ''}{srChange.toFixed(1)} pp
+                  {srChange > 0 ? '+' : ''}{srChange.toFixed(1)}%
                 </p>
               </div>
               <div>
@@ -134,15 +134,15 @@ const MerchantIncidentDetail: React.FC = () => {
               </div>
             </div>
             
-            {evidence?.error_evidence && (
+            {(evidence?.error_evidence && (
               <div className="border-t border-slate-100 p-4 grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Technical Error Rate</p>
-                  <p className="font-bold text-slate-800 text-sm">{(evidence.error_evidence.current.technical_error_rate * 100).toFixed(1)}% (was {(evidence.error_evidence.baseline.technical_error_rate * 100).toFixed(1)}%)</p>
+                  <p className="font-bold text-slate-800 text-sm">{(evidence.error_evidence.current.technical_error_rate * 100).toFixed(1)}% (was {((evidence.error_evidence.baseline.technical_error_rate * 100).toFixed(1)}%)</p>
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-1">Customer Error Rate</p>
-                  <p className="font-bold text-slate-800 text-sm">{(evidence.error_evidence.current.customer_error_rate * 100).toFixed(1)}% (was {(evidence.error_evidence.baseline.customer_error_rate * 100).toFixed(1)}%)</p>
+                  <p className="font-bold text-slate-800 text-sm">{((evidence.error_evidence.current.customer_error_rate * 100).toFixed(1)}% (was {((evidence.error_evidence.baseline.customer_error_rate * 100).toFixed(1)}%)</p>
                 </div>
               </div>
             )}
@@ -165,12 +165,9 @@ const MerchantIncidentDetail: React.FC = () => {
                       Confidence: {(llm_report.likely_cause.confidence * 100).toFixed(0)}%
                     </span>
                   </div>
-                  {llm_report.incident_summary?.what_happened ? (
-                    <div>
-                      <span className="font-semibold text-slate-900 block mb-1">Detailed Explanation:</span>
-                      <p className="text-slate-600">{llm_report.incident_summary.what_happened}</p>
-                    </div>
-                  ) : null}
+                  <div>
+                    <span className="font-semibold text-slate-900">Explanation:</span> {llm_report.incident_summary?.what_happened || "No detailed explanation available."}
+                  </div>
                   
                   {llm_report.recommended_actions && llm_report.recommended_actions.length > 0 && (
                     <div className="mt-4 border-t border-slate-100 pt-3">
@@ -243,7 +240,7 @@ const MerchantIncidentDetail: React.FC = () => {
                       recovery.state === 'PROCESSING' ? 'bg-blue-50 text-blue-700 border-blue-200' :
                       recovery.state === 'FAILED' ? 'bg-red-50 text-red-700 border-red-200' :
                       'bg-slate-100 text-slate-700 border-slate-200'
-                    }`}>{recovery.state || (policy_decision?.decision === 'AUTO_APPROVED' || policy_decision?.decision === 'HUMAN_APPROVAL' ? 'PENDING_EXECUTION' : 'NOT_EXECUTED')}</span>
+                    }`}>{recovery.state || 'NOT_EXECUTED'}</span>
                   </div>
                   {recovery.error && (
                     <div className="mt-2 p-2 bg-red-50 text-red-700 text-xs rounded border border-red-200">

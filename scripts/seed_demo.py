@@ -30,6 +30,24 @@ from app.llm_report_generator import LLMReportGenerator
 from app.policy_engine import PolicyEngine
 from app.recovery_engine import RecoveryEngine
 
+from app.models.user import User
+from app.auth import get_password_hash
+
+def get_or_create_user(db, user_id: str, email: str, password: str, roles: str, merchant_id):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        user = User(
+            user_id=user_id,
+            email=email,
+            password_hash=get_password_hash(password),
+            roles=roles,
+            merchant_id=merchant_id
+        )
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+    return user
+
 def get_or_create_merchant(db, merchant_id: str, name: str = None, description: str = None):
     """Get or create a merchant."""
     merchant = db.query(Merchant).filter(Merchant.merchant_id == merchant_id).first()
@@ -473,6 +491,12 @@ def main():
         # Get or create merchants
         merchant_a = get_or_create_merchant(db, "scenario_a_merchant", "Scenario A Merchant", "Merchant experiencing localized technical issue")
         merchant_e = get_or_create_merchant(db, "scenario_e_merchant", "Scenario E Merchant", "Merchant experiencing customer-caused issue")
+
+        # Create users for Scenario A Merchant
+        get_or_create_user(db, "merchant_admin", "merchant@example.com", "password123", "merchant", merchant_a.id)
+        get_or_create_user(db, "support_user", "support@example.com", "password123", "support", merchant_a.id)
+        get_or_create_user(db, "approver_user", "approver@example.com", "password123", "approver", merchant_a.id)
+
 
         # Check if Scenario A incident already exists
         incident_a = db.query(Incident).filter(Incident.incident_id == "scenario_a_merchant_20260822_100000").first()

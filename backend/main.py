@@ -75,6 +75,30 @@ llm_generator = LLMReportGenerator()
 policy_engine = PolicyEngine()
 
 # Pydantic models for request/response validation
+from app.database import get_sync_db
+from sqlalchemy.orm import Session
+from app.auth import authenticate_user, create_access_token
+from app.exceptions import AuthenticationException
+
+class LoginRequest(BaseModel):
+    user_id: str
+    password: str
+
+@app.post("/api/auth/login")
+def login(request: LoginRequest, db: Session = Depends(get_sync_db)):
+    user = authenticate_user(db, request.user_id, request.password)
+    if not user:
+        raise AuthenticationException("Incorrect username or password")
+    
+    access_token = create_access_token(data={"sub": user.user_id})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "roles": user.role_list,
+        "merchant_id": str(user.merchant_id) if user.merchant_id else None
+    }
+
+
 class IncidentBase(BaseModel):
     incident_id: str
     merchant_id: str

@@ -1,12 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
-@tailwind utils;
+@tailwind utilities;
 
-/* Custom styles */
-body {
-  @apply bg-gray-50;
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-family: 'Inter', sans-serif;
+  }
 }
 
-.container {
-  @apply max-w-7xl;
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded border border-transparent shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-colors;
+  }
+  .btn-secondary {
+    @apply px-4 py-2 bg-white text-slate-700 text-sm font-medium rounded border border-slate-300 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 disabled:opacity-50 transition-colors;
+  }
+  .btn-danger {
+    @apply px-4 py-2 bg-red-600 text-white text-sm font-medium rounded border border-transparent shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 transition-colors;
+  }
+  .badge-green {
+    @apply px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200;
+  }
+  .badge-yellow {
+    @apply px-2 py-0.5 rounded text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200;
+  }
+  .badge-red {
+    @apply px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-800 border border-red-200;
+  }
+  .badge-blue {
+    @apply px-2 py-0.5 rounded text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200;
+  }
+  .badge-neutral {
+    @apply px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200;
+  }
+  .card {
+    @apply bg-white border border-slate-200 rounded shadow-sm;
+  }
 }

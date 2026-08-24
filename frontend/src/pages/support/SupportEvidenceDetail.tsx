@@ -13,7 +13,7 @@ const SupportEvidenceDetail: React.FC = () => {
       try {
         setLoading(true);
         const response = await supportAPI.getEvidence(incidentId!);
-        setEvidence(response.data);
+        setEvidence(response.data.evidence);
         setError(null);
       } catch (err: any) {
         console.error('Failed to fetch evidence:', err);
@@ -60,7 +60,7 @@ const SupportEvidenceDetail: React.FC = () => {
         {/* We'll display the evidence in a readable format */}
         <div className="space-y-4">
           <div>
-            <h2 className="text-xl font-bold mb-2">Evidence Package</h2>
+            <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Evidence Package</h2>
             <p className="text-sm text-gray-500 mb-2">
               Incident ID: {evidence.incident_metadata?.incident_id || 'N/A'}
             </p>

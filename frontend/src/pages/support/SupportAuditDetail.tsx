@@ -59,7 +59,7 @@ const SupportAuditDetail: React.FC = () => {
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div>
-            <h2 className="text-xl font-bold mb-2">Audit Trail for Incident</h2>
+            <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Audit Trail for Incident</h2>
             <p className="text-sm text-gray-500 mb-2">
               Incident ID: {audit.audit_trail.length > 0 ? audit.audit_trail[0].incident_id || 'N/A' : 'N/A'}
             </p>

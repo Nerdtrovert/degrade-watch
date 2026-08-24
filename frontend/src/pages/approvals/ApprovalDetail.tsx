@@ -13,7 +13,7 @@ const ApprovalDetail: React.FC = () => {
       try {
         setLoading(true);
         const response = await approvalsAPI.getApprovalDetail(approvalId!);
-        setApproval(response.data);
+        setApproval(response.data.approval);
         setError(null);
       } catch (err: any) {
         console.error('Failed to fetch approval detail:', err);
@@ -56,8 +56,8 @@ const ApprovalDetail: React.FC = () => {
       {/* We'll split the detail into sections */}
       <div className="space-y-6">
         {/* Approval Information */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-2">Approval Information</h2>
+        <div className="card overflow-hidden border-slate-300 shadow-sm">
+          <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Approval Information</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p><strong>Approval ID:</strong> {approval.approval_id}</p>
@@ -76,7 +76,7 @@ const ApprovalDetail: React.FC = () => {
               <p><strong>Revenue at Risk:</strong> {(approval.revenue_at_risk_paise || 0) / 100} INR</p>
               <p><strong>Proposed Action:</strong> {approval.proposed_action}</p>
               <p><strong>Policy Reason Codes:</strong> {approval.policy_reason_codes.join(', ')}</p>
-              <p><strong>Confidence:</strong> {(approval.confidence || 0) * 100}%</p>
+              <p><strong>Confidence:</strong> {((approval.confidence || 0) * 100).toFixed(1)}%</p>
               <p><strong>Status:</strong>
                 <span className={`px-2 py-1 rounded text-xs font-medium ${
                   approval.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
@@ -93,13 +93,13 @@ const ApprovalDetail: React.FC = () => {
               )}
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">Related Incident</h3>
+              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Related Incident</h3>
               {approval.incident ? (
                 <div className="space-y-2">
                   <p><strong>Detection Time:</strong> {new Date(approval.incident.detection_timestamp).toLocaleString()}</p>
                   <p><strong>Classification:</strong> {approval.incident.classification}</p>
                   <p><strong>Affected Segment:</strong> {approval.incident.affected_segment.payment_method} | {approval.incident.affected_segment.bank} | {approval.incident.affected_segment.device}</p>
-                  <p><strong>Success Rate Change:</strong> {((approval.incident.success_rate_evidence?.current_success_rate || 0) - (approval.incident.success_rate_evidence?.baseline_success_rate || 0)) * 100}% points</p>
+                  <p><strong>Success Rate Change:</strong> {(((approval.incident.success_rate_evidence?.current_success_rate || 0) - (approval.incident.success_rate_evidence?.baseline_success_rate || 0)) * 100).toFixed(1)} pp</p>
                   <p><strong>Revenue at Risk:</strong> {(approval.incident.impact_evidence?.revenue_at_risk.paise || 0) / 100} INR</p>
                 </div>
               ) : (
@@ -110,29 +110,29 @@ const ApprovalDetail: React.FC = () => {
         </div>
 
         {/* Evidence */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-2">Evidence Package</h2>
+        <div className="card overflow-hidden border-slate-300 shadow-sm">
+          <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Evidence Package</h2>
           {approval.evidence ? (
             <div className="space-y-3">
               <div>
-                <h3 className="text-lg font-bold mb-2">Localization</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Localization</h3>
                 <p><strong>Localization Status:</strong> {approval.evidence.localization_evidence.localization_status || 'N/A'}</p>
                 <p><strong>Control Analysis:</strong> {approval.evidence.localization_evidence.control_analysis.message || 'N/A'}</p>
               </div>
               <div>
-                <h3 className="text-lg font-bold mb-2">Impact</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Impact</h3>
                 <p><strong>Revenue at Risk:</strong> {(approval.evidence.impact_evidence.revenue_at_risk.paise || 0) / 100} INR</p>
                 <p><strong>Affected Users:</strong> {approval.evidence.impact_evidence.affected_users || 0}</p>
                 <p><strong>Affected Transactions:</strong> {approval.evidence.impact_evidence.affected_transactions || 0}</p>
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Investigation Checklist</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Investigation Checklist</h3>
                 <ul className="space-y-2">
                   {approval.evidence.investigation_checklist.map((check: any, index: number) => (
                     <li key={index} className="p-2 bg-gray-50 rounded">
                       <div className="flex justify-between">
                         <span><strong>{check.check}:</strong> {check.result}</span>
-                        <span className="text-xs">{check.result === 'PASS' ? 'text-green-600' : 'text-red-600'}</span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded border ${ check.result === 'PASS' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-red-50 text-red-700 border-red-200'}`}>{check.result}</span>
                       </div>
                       <p className="mt-1 text-sm text-gray-600">{check.details}</p>
                     </li>
@@ -146,12 +146,12 @@ const ApprovalDetail: React.FC = () => {
         </div>
 
         {/* LLM Report */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-2">LLM Forensic Report</h2>
+        <div className="card overflow-hidden border-slate-300 shadow-sm">
+          <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">LLM Forensic Report</h2>
           {approval.llm_report ? (
             <div className="space-y-3">
               <div>
-                <h3 className="text-lg font-bold mb-2">Summary</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Summary</h3>
                 <p><strong>Title:</strong> {approval.llm_report.summary.title}</p>
                 <p><strong>What Happened:</strong> {approval.llm_report.summary.what_happened}</p>
                 <p><strong>Where:</strong></p>
@@ -161,11 +161,11 @@ const ApprovalDetail: React.FC = () => {
                   <li>Device: {approval.llm_report.summary.where.device}</li>
                   <li>UPI App: {approval.llm_report.summary.where.upi_app}</li>
                 </ul>
-                <p><strong>Confidence:</strong> {(approval.llm_report.summary.confidence || 0) * 100}% ({approval.llm_report.summary.confidence_level})</p>
+                <p><strong>Confidence:</strong> {((approval.llm_report.summary.confidence || 0) * 100).toFixed(1)}% ({approval.llm_report.summary.confidence_level})</p>
                 <p><strong>Confidence Explanation:</strong> {approval.llm_report.summary.confidence_explanation}</p>
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Evidence Summary</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Evidence Summary</h3>
                 <ul className="list-disc list-inside space-y-1">
                   {approval.llm_report.summary.evidence_summary.map((point: string, index: number) => (
                     <li key={index}>{point}</li>
@@ -173,12 +173,12 @@ const ApprovalDetail: React.FC = () => {
                 </ul>
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Likely Cause</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Likely Cause</h3>
                 <p><strong>Primary:</strong> {approval.llm_report.likely_cause.primary}</p>
-                <p><strong>Confidence:</strong> {(approval.llm_report.likely_cause.confidence || 0) * 100}%</p>
+                <p><strong>Confidence:</strong> {((approval.llm_report.likely_cause.confidence || 0) * 100).toFixed(1)}%</p>
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Alternative Hypotheses</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Alternative Hypotheses</h3>
                 {approval.llm_report.alternative_hypotheses.map((hypothesis: any, index: number) => (
                   <div key={index} className="p-3 bg-gray-50 rounded">
                     <p><strong>Hypothesis:</strong> {hypothesis.hypothesis}</p>
@@ -188,7 +188,7 @@ const ApprovalDetail: React.FC = () => {
                 ))}
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Recommended Next Steps</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Recommended Next Steps</h3>
                 <ol className="list-decimal list-inside space-y-1">
                   {approval.llm_report.recommended_next_steps.map((step: string, index: number) => (
                     <li key={index}>{step}</li>
@@ -196,7 +196,7 @@ const ApprovalDetail: React.FC = () => {
                 </ol>
               </div>
               <div className="mt-4">
-                <h3 className="text-lg font-bold mb-2">Recovery Recommendation</h3>
+                <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Recovery Recommendation</h3>
                 <p><strong>Eligible:</strong> {approval.llm_report.recovery.eligible ? 'Yes' : 'No'}</p>
                 <p><strong>Recommendation:</strong> {approval.llm_report.recovery.recommendation}</p>
                 <p><strong>Amount:</strong> {(approval.llm_report.recovery.amount.paise || 0) / 100} INR</p>
@@ -209,8 +209,8 @@ const ApprovalDetail: React.FC = () => {
         </div>
 
         {/* Policy Decision */}
-        <div className="bg-white p-4 rounded-lg shadow">
-          <h2 className="text-xl font-bold mb-2">Policy Decision</h2>
+        <div className="card overflow-hidden border-slate-300 shadow-sm">
+          <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Policy Decision</h2>
           {approval.policy_decision ? (
             <div className="space-y-3">
               <p><strong>Decision:</strong>

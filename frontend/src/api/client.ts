@@ -33,6 +33,14 @@ apiClient.interceptors.response.use(
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       console.error(`API Error: ${error.response.status}`, error.response.data);
+      
+      if (error.response.status === 401 || error.response.status === 403) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_roles');
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      }
     } else if (error.request) {
       // The request was made but no response was received
       console.error('API Error: No response received', error.request);
