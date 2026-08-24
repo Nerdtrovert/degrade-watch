@@ -129,20 +129,20 @@ const SupportIncidentDetail: React.FC = () => {
           <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Success Rate Evidence</h2>
           {incident.success_rate_evidence ? (
             <div className="space-y-3">
-              <p><strong>Baseline Success Rate:</strong> {(incident.success_rate_evidence.baseline_success_rate * 100).toFixed(1)}%</p>
-              <p><strong>Current Success Rate:</strong> {(incident.success_rate_evidence.current_success_rate * 100).toFixed(1)}%</p>
-              <p><strong>Absolute Change:</strong> {(incident.success_rate_evidence.absolute_change * 100).toFixed(1)} pp</p>
-              <p><strong>Relative Change:</strong> {(incident.success_rate_evidence.relative_change * 100).toFixed(1)}%</p>
-              <p><strong>Baseline Attempts:</strong> {incident.success_rate_evidence.baseline_attempts || 0}</p>
-              <p><strong>Current Attempts:</strong> {incident.success_rate_evidence.current_attempts || 0}</p>
-              {incident.success_rate_evidence.statistical_significance ? (
+              <p><strong>Baseline Success Rate:</strong> {(incident.success_rate_evidence?.baseline_success_rate * 100).toFixed(1)}%</p>
+              <p><strong>Current Success Rate:</strong> {(incident.success_rate_evidence?.current_success_rate * 100).toFixed(1)}%</p>
+              <p><strong>Absolute Change:</strong> {(incident.success_rate_evidence?.absolute_change * 100).toFixed(1)} pp</p>
+              <p><strong>Relative Change:</strong> {(incident.success_rate_evidence?.relative_change * 100).toFixed(1)}%</p>
+              <p><strong>Baseline Attempts:</strong> {incident.success_rate_evidence?.baseline_attempts || 0}</p>
+              <p><strong>Current Attempts:</strong> {incident.success_rate_evidence?.current_attempts || 0}</p>
+              {incident.success_rate_evidence?.statistical_significance ? (
                 <div className="bg-gray-50 p-3 rounded">
                   <p><strong>Statistical Significance:</strong></p>
-                  <p>Statistically Significant: {incident.success_rate_evidence.statistical_significance.statistically_significant ? 'Yes' : 'No'}</p>
-                  <p>p-value: {incident.success_rate_evidence.statistical_significance.p_value}</p>
-                  <p>Z-score: {incident.success_rate_evidence.statistical_significance.z_score}</p>
-                  <p>Confidence Level: {(incident.success_rate_evidence.statistical_significance.confidence_level * 100).toFixed(1)}%</p>
-                  <p><strong>Interpretation:</strong> {incident.success_rate_evidence.interpretation || 'N/A'}</p>
+                  <p>Statistically Significant: {incident.success_rate_evidence?.statistical_significance.statistically_significant ? 'Yes' : 'No'}</p>
+                  <p>p-value: {incident.success_rate_evidence?.statistical_significance.p_value}</p>
+                  <p>Z-score: {incident.success_rate_evidence?.statistical_significance.z_score}</p>
+                  <p>Confidence Level: {(incident.success_rate_evidence?.statistical_significance.confidence_level * 100).toFixed(1)}%</p>
+                  <p><strong>Interpretation:</strong> {incident.success_rate_evidence?.interpretation || 'N/A'}</p>
                 </div>
               ) : null}
             </div>
@@ -264,8 +264,8 @@ const SupportIncidentDetail: React.FC = () => {
           <h2 className="bg-slate-100 border-b border-slate-200 px-4 py-3 font-bold text-sm text-slate-700 uppercase tracking-wider">Impact Evidence</h2>
           {incident.impact_evidence ? (
             <div className="space-y-3">
-              <p><strong>Revenue at Risk:</strong> {(incident.impact_evidence.revenue_at_risk.paise || 0) / 100} INR</p>
-              <p><strong>Timestamp:</strong> {new Date(incident.impact_evidence.revenue_at_risk.timestamp || 0).toLocaleString()}</p>
+              <p><strong>Revenue at Risk:</strong> {(incident.impact_evidence?.revenue_at_risk?.paise || 0) / 100} INR</p>
+              <p><strong>Timestamp:</strong> {new Date(incident.impact_evidence?.revenue_at_risk.timestamp || 0).toLocaleString()}</p>
               <p><strong>Affected Users:</strong> {incident.impact_evidence.affected_users || 0}</p>
               <p><strong>Affected Transactions:</strong> {incident.impact_evidence.affected_transactions || 0}</p>
             </div>

@@ -926,6 +926,9 @@ async def get_approvals(
                 ev_pkg = incident.evidence_package.evidence_package if incident.evidence_package else {}
                 impact = ev_pkg.get("impact_evidence", {})
                 rev_paise = impact.get("revenue_at_risk", {}).get("paise", 0)
+                
+                llm_rep = incident.forensic_report.report if incident.forensic_report else {}
+                confidence = llm_rep.get("summary", {}).get("confidence", 0.9)
 
                 approvals.append({
                     "approval_id": f"{incident.incident_id}_approval",
@@ -935,9 +938,9 @@ async def get_approvals(
                     "revenue_at_risk_paise": rev_paise,
                     "proposed_action": pol.requested_recovery_action or "PAYMENT_LINK",
                     "policy_reason_codes": pol.reason_codes or [],
-                    "confidence": 0.9,
+                    "confidence": confidence,
                     "status": "PENDING",
-                    "created_at": rec.created_at.isoformat() if hasattr(rec, 'created_at') and rec.created_at else incident.detection_timestamp.isoformat()
+                    "created_at": rec.created_at.isoformat() if hasattr(rec, "created_at") and rec.created_at else incident.detection_timestamp.isoformat()
                 })
 
         return {

@@ -4,8 +4,8 @@ import { supportAPI, SupportIncident } from '../../api/support';
 
 const SupportIncidentConsole: React.FC = () => {
   const [incidents, setIncidents] = useState<SupportIncident[]>([]);
-  const activeIncidents = incidents.filter(i => i.classification !== 'NORMAL');
-  const normalIncidents = incidents.filter(i => i.classification === 'NORMAL');
+  const activeIncidents = incidents.filter(i => i.detector_classification !== 'NORMAL');
+  const normalIncidents = incidents.filter(i => i.detector_classification === 'NORMAL');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -131,7 +131,7 @@ const SupportIncidentConsole: React.FC = () => {
                       <div className={`text-sm font-bold ${(((incident.success_rate_evidence?.current_success_rate || 0) - (incident.success_rate_evidence?.baseline_success_rate || 0)) * 100) < 0 ? 'text-red-600' : 'text-slate-700'}`}>
                         {(((incident.success_rate_evidence?.current_success_rate || 0) - (incident.success_rate_evidence?.baseline_success_rate || 0)) * 100).toFixed(1)} pp SR
                       </div>
-                      <div className="text-xs text-slate-500 mt-0.5 font-mono">₹{((incident.impact_evidence?.revenue_at_risk.paise || 0) / 100).toLocaleString()}</div>
+                      <div className="text-xs text-slate-500 mt-0.5 font-mono">₹{((incident.impact_evidence?.revenue_at_risk?.paise || 0) / 100).toLocaleString()}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {getPolicyBadge(incident.policy_status)}
@@ -204,7 +204,7 @@ const SupportIncidentConsole: React.FC = () => {
                       <div className={`text-sm font-bold ${(((incident.success_rate_evidence?.current_success_rate || 0) - (incident.success_rate_evidence?.baseline_success_rate || 0)) * 100) < 0 ? 'text-red-600' : 'text-slate-700'}`}>
                         {(((incident.success_rate_evidence?.current_success_rate || 0) - (incident.success_rate_evidence?.baseline_success_rate || 0)) * 100).toFixed(1)} pp SR
                       </div>
-                      <div className="text-xs text-slate-500 mt-0.5 font-mono">₹{((incident.impact_evidence?.revenue_at_risk.paise || 0) / 100).toLocaleString()}</div>
+                      <div className="text-xs text-slate-500 mt-0.5 font-mono">₹{((incident.impact_evidence?.revenue_at_risk?.paise || 0) / 100).toLocaleString()}</div>
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
                       {getPolicyBadge(incident.policy_status)}

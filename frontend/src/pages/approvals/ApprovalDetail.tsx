@@ -100,7 +100,7 @@ const ApprovalDetail: React.FC = () => {
                   <p><strong>Classification:</strong> {approval.incident.classification}</p>
                   <p><strong>Affected Segment:</strong> {approval.incident.affected_segment.payment_method} | {approval.incident.affected_segment.bank} | {approval.incident.affected_segment.device}</p>
                   <p><strong>Success Rate Change:</strong> {(((approval.incident.success_rate_evidence?.current_success_rate || 0) - (approval.incident.success_rate_evidence?.baseline_success_rate || 0)) * 100).toFixed(1)} pp</p>
-                  <p><strong>Revenue at Risk:</strong> {(approval.incident.impact_evidence?.revenue_at_risk.paise || 0) / 100} INR</p>
+                  <p><strong>Revenue at Risk:</strong> {(approval.incident.impact_evidence?.revenue_at_risk?.paise || 0) / 100} INR</p>
                 </div>
               ) : (
                 <p>No incident data available</p>
@@ -121,9 +121,9 @@ const ApprovalDetail: React.FC = () => {
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Impact</h3>
-                <p><strong>Revenue at Risk:</strong> {(approval.evidence.impact_evidence.revenue_at_risk.paise || 0) / 100} INR</p>
-                <p><strong>Affected Users:</strong> {approval.evidence.impact_evidence.affected_users || 0}</p>
-                <p><strong>Affected Transactions:</strong> {approval.evidence.impact_evidence.affected_transactions || 0}</p>
+                <p><strong>Revenue at Risk:</strong> {(approval.evidence?.impact_evidence?.revenue_at_risk?.paise || 0) / 100} INR</p>
+                <p><strong>Affected Users:</strong> {approval.evidence?.impact_evidence.affected_users || 0}</p>
+                <p><strong>Affected Transactions:</strong> {approval.evidence?.impact_evidence.affected_transactions || 0}</p>
               </div>
               <div className="mt-4">
                 <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-3 border-b border-slate-100 pb-2">Investigation Checklist</h3>
